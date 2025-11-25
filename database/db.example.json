@@ -1,0 +1,81 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "username": "johndoe",
+            "email": "john.doe@example.com",
+            "password": "newpassword123",
+            "phone": "+243 111 222 333",
+            "profilePicture": "https://example.com/johndoe.jpg",
+            "bio": "Passionate about coding and open source.",
+            "location": "Goma, DRC",
+            "website": "https://johndoe.com",
+            "createdAt": "2023-09-15T08:30:00Z",
+            "followers": 200,
+            "following": 180
+        },
+        {
+            "id": 2,
+            "name": "Alice Doe",
+            "username": "alicedoe",
+            "email": "alice@example.com",
+            "password": "abcdef",
+            "phone": "+243 987 654 321",
+            "profilePicture": "https://example.com/alice.jpg",
+            "bio": "Designer and artist.",
+            "location": "Lubumbashi, DRC",
+            "website": "https://alicedoe.com",
+            "createdAt": "2023-11-01T09:00:00Z",
+            "followers": 80,
+            "following": 60
+        }
+    ],
+    "tweets": [
+        {
+            "id": 1,
+            "userId": 1,
+            "content": "Hello, this is my first tweet!",
+            "media": [
+                {
+                    "type": "image",
+                    "url": "https://example.com/image1.jpg"
+                },
+                {
+                    "type": "video",
+                    "url": "https://example.com/video1.mp4"
+                }
+            ],
+            "likes": 10,
+            "retweets": 5,
+            "replies": [3],
+            "createdAt": "2023-10-01T12:00:00Z"
+        },
+        {
+            "id": 2,
+            "userId": 1,
+            "content": "Just had a great day at the park!",
+            "media": [
+                {
+                    "type": "image",
+                    "url": "https://example.com/image2.jpg"
+                }
+            ],
+            "likes": 20,
+            "retweets": 10,
+            "replies": [],
+            "createdAt": "2023-10-02T14:30:00Z"
+        },
+        {
+            "id": 3,
+            "userId": 2,
+            "content": "@christianmwanya Welcome to Twitter!",
+            "media": [],
+            "likes": 5,
+            "retweets": 1,
+            "replies": [],
+            "createdAt": "2023-10-01T13:00:00Z",
+            "replyTo": 1
+        }
+    ]
+}
