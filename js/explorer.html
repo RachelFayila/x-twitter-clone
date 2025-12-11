@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorer | X</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html" class="logo">𝕏</a>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="explorer.html" class="nav-link active">
+                    <i class="fas fa-search"></i>
+                    <span>Explorer</span>
+                </a>
+                <a href="notifications.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge">3</span>
+                </a>
+                <a href="profil.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-secondary">Connexion</a>
+                <a href="register.html" class="btn btn-primary">S'inscrire</a>
+            </div>
+            
+            <div class="mobile-menu-toggle">
+                <label for="hamburger" class="hamburger">
+                    <img src="./images/menu-hamburger.png" alt="icône menu hamburger">
+                </label>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <div class="layout-sidebar">
+            <aside class="sidebar">
+                <a href="index.html" class="sidebar-logo">𝕏</a>
+                
+                <div class="sidebar-nav">
+                    <a href="index.html" class="sidebar-link">
+                        <i class="fas fa-home"></i>
+                        <span>Accueil</span>
+                    </a>
+                    <a href="explorer.html" class="sidebar-link active">
+                        <i class="fas fa-search"></i>
+                        <span>Explorer</span>
+                    </a>
+                    <a href="notifications.html" class="sidebar-link">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="notification-badge">3</span>
+                    </a>
+                    <a href="profil.html" class="sidebar-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profil</span>
+                    </a>
+                    <button class="sidebar-post-btn">
+                        <i class="fas fa-feather-alt"></i>
+                        <span>Poster</span>
+                    </button>
+                </div>
+                
+                <div class="sidebar-profile">
+                    <div class="profile-mini">
+                        <img src="./images/image rachel.jpg" alt="Avatar" class="profile-mini-avatar">
+                        <div class="profile-mini-info">
+                            <span class="profile-mini-name">Rachel Fayila</span>
+                            <span class="profile-mini-handle">@FayilaDigitalHub</span>
+                        </div>
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="content">
+                <div class="content-header">
+                    <h1>Explorer</h1>
+                    <button class="icon-btn">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+                
+                <div class="search-main">
+                    <div class="search-bar-large">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Rechercher sur X" id="main-search">
+                        <button class="search-filter-btn">
+                            <i class="fas fa-sliders-h"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="search-tabs">
+                        <button class="search-tab active">Pour vous</button>
+                        <button class="search-tab">Tendances</button>
+                        <button class="search-tab">Actualités</button>
+                        <button class="search-tab">Sports</button>
+                        <button class="search-tab">Divertissement</button>
+                    </div>
+                </div>
+                
+                <div class="explore-section">
+                    <h2 class="explore-title">Tendances pour vous</h2>
+                    
+                    <div class="trend-card">
+                        <div class="trend-info">
+                            <span class="trend-category">Technologie · Tendances</span>
+                            <h3 class="trend-name">#Dark Business Hi-Tech</h3>
+                            <span class="trend-count">25.4K posts</span>
+                        </div>
+                        <button class="trend-more-btn">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="trend-card">
+                        <div class="trend-info">
+                            <span class="trend-category">Formation & Accompagnement des jeunes vers l'excellence · Tendances</span>
+                            <h3 class="trend-name">#We Act / Rawbank</h3>
+                            <span class="trend-count">12.8K posts</span>
+                        </div>
+                        <button class="trend-more-btn">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="trend-card">
+                        <div class="trend-info">
+                            <span class="trend-category">Sports · En direct</span>
+                            <h3 class="trend-name">#Championnat2025</h3>
+                            <span class="trend-count">8.7K posts</span>
+                        </div>
+                        <button class="trend-more-btn">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="trend-card">
+                        <div class="trend-info">
+                            <span class="trend-category">Divertissement · Tendances</span>
+                            <h3 class="trend-name">#FilmDuMois</h3>
+                            <span class="trend-count">15.2K posts</span>
+                        </div>
+                        <button class="trend-more-btn">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    
+                    <a href="#" class="explore-more">Voir plus</a>
+                </div>
+                
+                <div class="explore-section">
+                    <h2 class="explore-title">Actualités</h2>
+                    
+                    <div class="news-card">
+                        <div class="news-content">
+                            <span class="news-source">Le Monde Tech</span>
+                            <h3 class="news-title">Nouvelle révolution dans l'industrie des semi-conducteurs</h3>
+                            <p class="news-excerpt">Une startup française annonce une percée majeure dans la fabrication de puces électroniques...</p>
+                        </div>
+                        <div class="news-image">
+                            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Actualité">
+                        </div>
+                    </div>
+                    
+                    <div class="news-card">
+                        <div class="news-content">
+                            <span class="news-source">Tech Insights</span>
+                            <h3 class="news-title">L'impact de l'IA sur le marché du travail en 2025</h3>
+                            <p class="news-excerpt">Une nouvelle étude révèle comment l'intelligence artificielle transforme les emplois dans le secteur technologique...</p>
+                        </div>
+                        <div class="news-image">
+                            <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-300&q=80" alt="Actualité">
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="explore-more">Voir plus</a>
+                </div>
+                
+                <div class="explore-section">
+                    <h2 class="explore-title">Posts populaires</h2>
+                    
+                    <div class="post">
+                        <div class="post-avatar">
+                            <img src="https://i.pravatar.cc/40?img=9" alt="Avatar">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-header">
+                                <span class="post-author">Innovation Tech</span>
+                                <span class="post-handle">@inntech · 2h</span>
+                            </div>
+                            <div class="post-text">
+                                Les technologies quantiques progressent plus vite que prévu. Plusieurs entreprises annoncent des avancées significatives cette année.
+                            </div>
+                            <div class="post-actions">
+                                <button class="post-action">
+                                    <i class="far fa-comment"></i>
+                                    <span>124</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="fas fa-retweet"></i>
+                                    <span>56</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="far fa-heart"></i>
+                                    <span>321</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="post">
+                        <div class="post-avatar">
+                            <img src="https://i.pravatar.cc/40?img=10" alt="Avatar">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-header">
+                                <span class="post-author">Science Daily</span>
+                                <span class="post-handle">@sciencedaily · 5h</span>
+                            </div>
+                            <div class="post-text">
+                                Découverte d'une nouvelle exoplanète potentiellement habitable à seulement 100 années-lumière de la Terre.
+                            </div>
+                            <div class="post-actions">
+                                <button class="post-action">
+                                    <i class="far fa-comment"></i>
+                                    <span>89</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="fas fa-retweet"></i>
+                                    <span>42</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="far fa-heart"></i>
+                                    <span>210</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="explore-more">Voir plus</a>
+                </div>
+            </div>
+
+            <aside class="right-sidebar">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher sur X">
+                </div>
+                
+                <div class="trends">
+                    <h3>Tendances en RDC</h3>
+                    <div class="trend">
+                        <span class="trend-category">Tendances</span>
+                        <span class="trend-name">#connect Student</span>
+                        <span class="trend-count">5.2K posts</span="trend-category">Tendances</span>
+                        <span class="trend-name">#Dark Business Hi-Tech</span>
+                        <span class="trend-count">5.2K posts</span>
+                    </div>
+                    <div class="trend">
+                        <span class="trend-category">Tendances</span>
+                        <span class="trend-name">#WeAct </span>
+                        <span class="trend-count">3.8K posts</span>
+                    </div>
+                    <div class="trend">
+                        <span class="trend-category">Tendances</span>
+                        <span class="trend-name">#FayilaDigitalHub</span>
+                        <span class="trend-count">4.1K posts</span>
+                    </div>
+                    <a href="#" class="trend-more">Voir plus</a>
+                </div>
+                
+                <div class="who-to-follow">
+                    <h3>À suivre</h3>
+                    <div class="follow-user">
+                        <img src="./images/We Act.jpeg" alt="Avatar">
+                        <div class="follow-user-info">
+                            <span class="follow-user-name">We Act</span>
+                            <span class="follow-user-handle">Agir pour inspirer</span>
+                        </div>
+                        <button class="btn btn-follow">Suivre</button>
+                    </div>
+                    <div class="follow-user">
+                        <img src="./images/rawbank.jpeg" alt="Avatar">
+                        <div class="follow-user-info">
+                            <span class="follow-user-name">Rawbank</span>
+                            <span class="follow-user-handle">Au-delà d’une banque</span>
+                        </div>
+                        <button class="btn btn-follow">Suivre</button>
+                    </div>
+                    <a href="#" class="follow-more">Voir plus</a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#">Conditions d'utilisation</a>
+                    <a href="#">Politique de confidentialité</a>
+                    <a href="#">Politique relative aux cookies</a>
+                    <a href="#">Accessibilité</a>
+                    <a href="#">Informations sur les publicités</a>
+                    <span class="copyright">© 2024 X Corp.</span>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <div class="mobile-modal">
+        <div class="mobile-modal-content">
+            <div class="mobile-modal-header">
+                <h3>Menu</h3>
+                <button class="mobile-modal-close">&times;</button>
+            </div>
+            <div class="mobile-modal-nav">
+                <a href="index.html" class="mobile-nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="explorer.html" class="mobile-nav-link active">
+                    <i class="fas fa-search"></i>
+                    <span>Explorer</span>
+                </a>
+                <a href="notifications.html" class="mobile-nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge">3</span>
+                </a>
+                <a href="profil.html" class="mobile-nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+                <div class="mobile-modal-actions">
+                    <a href="login.html" class="btn btn-secondary">Connexion</a>
+                    <a href="register.html" class="btn btn-primary">S'inscrire</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

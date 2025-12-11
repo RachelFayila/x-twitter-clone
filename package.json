@@ -1,17 +1,24 @@
 {
-  "name": "clerk",
+  "name": "x-app-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend JSON Server pour l'application X",
+  "main": "backend/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "json-server --watch database/db.json",
-    "init-data": "node script/init-data.js"
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "json-server": "^1.0.0-beta.3"
-  }
+    "json-server": "^0.17.4",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["twitter", "social", "api", "json-server"],
+  "author": "Votre Nom",
+  "license": "MIT"
 }

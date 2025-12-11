@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X - Connexion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+    <header class="header auth-header">
+        <nav class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html" class="logo">𝕏</a>
+            </div>
+            <div class="nav-actions">
+                <a href="register.html" class="btn btn-secondary">S'inscrire</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Connexion à X</h1>
+                <p>Connectez-vous pour découvrir ce qui se passe en ce moment</p>
+            </div>
+            
+            <form class="auth-form" action="#" method="POST">
+                <div class="form-group">
+                    <label for="email">E-mail, téléphone ou identifiant</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="remember">
+                        <span class="checkmark"></span>
+                        Se souvenir de moi
+                    </label>
+                    <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                
+                <div class="auth-divider">
+                    <span>ou</span>
+                </div>
+                
+                <button type="button" class="btn btn-google">
+                    <i class="fab fa-google"></i>
+                    Continuer avec Google
+                </button>
+                
+                <button type="button" class="btn btn-apple">
+                    <i class="fab fa-apple"></i>
+                    Continuer avec Apple
+                </button>
+                
+                <div class="auth-footer">
+                    <p>Vous n'avez pas de compte ? <a href="register.html">S'inscrire</a></p>
+                    <p class="auth-terms">
+                        En vous connectant, vous acceptez les <a href="#">Conditions d'utilisation</a> et la 
+                        <a href="#">Politique de confidentialité</a>, y compris l'<a href="#">Utilisation de cookies</a>.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

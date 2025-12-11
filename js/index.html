@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X - Accueil</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html" class="logo">𝕏</a>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="explorer.html" class="nav-link">
+                    <i class="fas fa-search"></i>
+                    <span>Explorer</span>
+                </a>
+                <a href="notifications.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge">3</span>
+                </a>
+                <a href="profil.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-secondary">Connexion</a>
+                <a href="register.html" class="btn btn-primary">S'inscrire</a>
+            </div>
+            
+               <div class="mobile-menu-toggle">
+                <label for="hamburger" class="hamburger">
+                    <img src="./images/menu-hamburger.png" alt="icône menu hamburger">
+                </label>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <div class="layout-sidebar">
+            <aside class="sidebar">
+                <a href="index.html" class="sidebar-logo">𝕏</a>
+                
+                <div class="sidebar-nav">
+                    <a href="index.html" class="sidebar-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Accueil</span>
+                    </a>
+                    <a href="explorer.html" class="sidebar-link">
+                        <i class="fas fa-search"></i>
+                        <span>Explorer</span>
+                    </a>
+                    <a href="notifications.html" class="sidebar-link">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="notification-badge">3</span>
+                    </a>
+                    <a href="profil.html" class="sidebar-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profil</span>
+                    </a>
+                    <button class="sidebar-post-btn">
+                        <i class="fas fa-feather-alt"></i>
+                        <span>Poster</span>
+                    </button>
+                </div>
+                
+                <div class="sidebar-profile">
+                    <div class="profile-mini">
+                        <div class="profile-mini-info">
+                            <span class="profile-mini-name">Rachel Fayila</span>
+                            <span class="profile-mini-handle">FayilaDigitalHub</span>
+                        </div>
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="content">
+                <div class="content-header">
+                    <h1>Accueil</h1>
+                    <button class="icon-btn">
+                        <i class="fas fa-star"></i>
+                    </button>
+                </div>
+                
+                <div class="post-creator">
+                    <div class="post-creator-avatar">
+                        <img src="./images/image rachel.jpg" alt="Avatar">
+                    </div>
+                    <div class="post-creator-input">
+                        <textarea placeholder="Quoi de neuf ?" rows="3"></textarea>
+                        <div class="post-creator-actions">
+                            <div class="post-creator-icons">
+                                <i class="fas fa-image"></i>
+                                <i class="fas fa-poll"></i>
+                                <i class="far fa-smile"></i>
+                                <i class="far fa-calendar-alt"></i>
+                            </div>
+                            <button class="btn btn-primary">Poster</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline">
+                    <div class="post">
+                        <div class="post-avatar">
+                            <img src="./images/barox.jpeg" alt="image">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-header">
+                                <span class="post-author">Exauce Mabiala</span>
+                                <span class="post-handle">2h</span>
+                            </div>
+                            <div class="post-text">
+                                Connect Student est une startup EdTech qui relie les étudiants et jeunes diplomés aux entreprises pour faciliter leur insertion professionnelle. 
+                            </div>
+                            <div class="post-actions">
+                                <button class="post-action">
+                                    <i class="far fa-comment"></i>
+                                    <span>12</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="fas fa-retweet"></i>
+                                    <span>5</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="far fa-heart"></i>
+                                    <span>45</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="far fa-share-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="post">
+                        <div class="post-avatar">
+                            <img src="./images/We Act.jpeg" alt="image">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-header">
+                                <span class="post-author">We Act</span>
+                                <span class="post-handle"> 5h</span>
+                            </div>
+                            <div class="post-text">
+                                We Act est un programme d’accompagnement et de développement initié par Rawbank pour soutenir la jeunesse congolaise dans plusieurs domaines.
+                            </div>
+                            <div class="post-actions">
+                                <button class="post-action">
+                                    <i class="far fa-comment"></i>
+                                    <span>42</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="fas fa-retweet"></i>
+                                    <span>18</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="far fa-heart"></i>
+                                    <span>89</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="far fa-share-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="post">
+                        <div class="post-avatar">
+                            <img src="./images/subira.jpeg" alt="image">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-header">
+                                <span class="post-author">Subir'Art</span>
+                                <span class="post-handle">8h</span>
+                            </div>
+                            <div class="post-text">
+                                Je suis ambassadrice de We Act, j'ai dis non aux violences basées sur le genre. Rejoignez-nous dans cette lutte importante !
+                            </div>
+                            <div class="post-actions">
+                                <button class="post-action">
+                                    <i class="far fa-comment"></i>
+                                    <span>8</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="fas fa-retweet"></i>
+                                    <span>3</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="far fa-heart"></i>
+                                    <span>27</span>
+                                </button>
+                                <button class="post-action">
+                                    <i class="far fa-share-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="right-sidebar">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher sur X">
+                </div>
+                
+                <div class="trends">
+                    <h3>Tendances pour vous</h3>
+                    <div class="trend">
+                        <span class="trend-category">Technologie · Tendances</span>
+                        <span class="trend-name">#DarkBusinessHi-Tech</span>
+                        <span class="trend-count">25.4K posts</span>
+                    </div>
+                    <div class="trend">
+                        <span class="trend-category">Mr Barox · Tendances</span>
+                        <span class="trend-name">#ConnectStudent</span>
+                        <span class="trend-count">12.8K posts</span>
+                    </div>
+                    <div class="trend">
+                        <span class="trend-category">Accompagnement des jeunes congolais · Tendances</span>
+                        <span class="trend-name">#We Act</span>
+                        <span class="trend-count">8.7K posts</span>
+                    </div>
+                    <a href="explorer.html" class="trend-more">Voir plus</a>
+                </div>
+                
+                <div class="who-to-follow">
+                    <h3>Suggestions</h3>
+                    <div class="follow-user">
+                        <img src="./images/We Act.jpeg" alt="Avatar">
+                        <div class="follow-user-info">
+                            <span class="follow-user-name">We Act</span>
+                            <span class="follow-user-handle">Agir pour inspirer</span>
+                        </div>
+                        <button class="btn btn-follow">Suivre</button>
+                    </div>
+                    <div class="follow-user">
+                        <img src="./images/rawbank.jpeg" alt="Avatar">
+                        <div class="follow-user-info">
+                            <span class="follow-user-name">Rawbank</span>
+                            <span class="follow-user-handle">Au-delà d’une banque</span>
+                        </div>
+                        <button class="btn btn-follow">Suivre</button>
+                    </div>
+                    <a href="explorer.html" class="follow-more">Voir plus</a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#">Conditions d'utilisation</a>
+                    <a href="#">Politique de confidentialité</a>
+                    <a href="#">Politique relative aux cookies</a>
+                    <a href="#">Accessibilité</a>
+                    <a href="#">Informations sur les publicités</a>
+                    <span class="copyright">© 2025 X Corp.</span>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <div class="mobile-modal">
+        <div class="mobile-modal-content">
+            <div class="mobile-modal-header">
+                <h3>Menu</h3>
+                <button class="mobile-modal-close">&times;</button>
+            </div>
+            <div class="mobile-modal-nav">
+                <a href="index.html" class="mobile-nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="explorer.html" class="mobile-nav-link">
+                    <i class="fas fa-search"></i>
+                    <span>Explorer</span>
+                </a>
+                <a href="notifications.html" class="mobile-nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge">3</span>
+                </a>
+                <a href="profil.html" class="mobile-nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+                <div class="mobile-modal-actions">
+                    <a href="login.html" class="btn btn-secondary">Connexion</a>
+                    <a href="register.html" class="btn btn-primary">S'inscrire</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
