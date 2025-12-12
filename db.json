@@ -1,134 +1,59 @@
 {
   "users": [
     {
-      "id": 1,
-      "email": "test@example.com",
-      "password": "$2a$10$N9qo8uLOickgx2ZMRZoMye3sY8Z7c5YJpJpz7c6X8qYQJvXc6rJdW",
-      "username": "testuser",
-      "fullName": "Test User",
-      "avatar": "https://i.pravatar.cc/150?img=1",
-      "bio": "Utilisateur de test",
-      "location": "Paris, France",
-      "website": "https://example.com",
-      "joined": "2024-01-01",
-      "followers": 245,
-      "following": 123,
-      "postsCount": 12,
-      "createdAt": "2024-01-01T10:00:00Z",
-      "isVerified": false
-    },
-    {
-      "id": 2,
+      "id": "1",
+      "fullname": "Rachel Fayila",
       "email": "rachel@example.com",
-      "password": "$2a$10$N9qo8uLOickgx2ZMRZoMye3sY8Z7c5YJpJpz7c6X8qYQJvXc6rJdW",
       "username": "FayilaDigitalHub",
-      "fullName": "Rachel Fayila",
-      "avatar": "./images/image rachel.jpg",
-      "bio": "Développeuse web passionnée par les nouvelles technologies. J'aime créer des expériences utilisateur innovantes et intuitives.",
+      "password": "$2a$10$N9qo8uLOickgx2ZMRZoMy.Mrq1V1.4B6U9Q7J2lV5v2bJQ8Y5fZ6W",
+      "birthdate": "1995-05-15",
+      "bio": "Développeuse web passionnée par les nouvelles technologies.",
       "location": "Kinshasa, République Démocratique du Congo",
-      "website": "www.fayiladigitalhub.com",
-      "joined": "2025-01-01",
+      "website": "https://www.fayiladigitalhub.com",
+      "avatar": "./images/image rachel.jpg",
       "followers": 1245,
       "following": 245,
-      "postsCount": 12,
-      "createdAt": "2025-01-01T10:00:00Z",
-      "isVerified": true
+      "posts": 12,
+      "createdAt": "2025-01-15T10:30:00Z"
     }
   ],
-  
   "posts": [
     {
-      "id": 1,
-      "userId": 2,
-      "content": "Aujourd'hui, j'ai découvert une nouvelle bibliothèque JavaScript très prometteuse pour simplifier les interactions avec les APIs.",
-      "likes": 7,
-      "retweets": 1,
-      "comments": 3,
-      "timestamp": "2024-01-15T10:30:00Z",
-      "createdAt": "2024-01-15T10:30:00Z",
-      "isLiked": false,
-      "isRetweeted": false
-    },
-    {
-      "id": 2,
-      "userId": 1,
-      "content": "Connect Student est une startup EdTech qui relie les étudiants et jeunes diplomés aux entreprises pour faciliter leur insertion professionnelle.",
+      "id": "1",
+      "content": "Connect Student est une startup EdTech qui relie les étudiants et jeunes diplômés aux entreprises pour faciliter leur insertion professionnelle.",
+      "authorId": "2",
+      "authorName": "Exauce Mabiala",
+      "authorHandle": "@exauce",
+      "authorAvatar": "./images/barox.jpeg",
       "likes": 45,
       "retweets": 5,
       "comments": 12,
-      "timestamp": "2024-01-16T08:15:00Z",
-      "createdAt": "2024-01-16T08:15:00Z",
-      "isLiked": false,
-      "isRetweeted": false
+      "timestamp": "2025-12-11T10:00:00Z"
     },
     {
-      "id": 3,
-      "userId": 1,
+      "id": "2",
       "content": "We Act est un programme d'accompagnement et de développement initié par Rawbank pour soutenir la jeunesse congolaise dans plusieurs domaines.",
+      "authorId": "3",
+      "authorName": "We Act",
+      "authorHandle": "@WeAct",
+      "authorAvatar": "./images/We Act.jpeg",
       "likes": 89,
       "retweets": 18,
       "comments": 42,
-      "timestamp": "2024-01-16T12:45:00Z",
-      "createdAt": "2024-01-16T12:45:00Z",
-      "isLiked": false,
-      "isRetweeted": false
+      "timestamp": "2025-12-11T07:00:00Z"
     }
   ],
-  
   "notifications": [
     {
-      "id": 1,
-      "userId": 2,
+      "id": "1",
+      "userId": "1",
       "type": "retweet",
-      "fromUserId": 3,
-      "fromUsername": "EphraimYaba",
-      "fromAvatar": "./images/Ephraim.jpeg",
+      "senderName": "Ephraim Yaba",
+      "senderAvatar": "./images/Ephraim.jpeg",
       "content": "a retweeté votre post.",
-      "postId": 1,
       "postPreview": "Juste fini de lire un livre incroyable sur le développement web...",
-      "isRead": false,
-      "createdAt": "2024-01-16T14:30:00Z"
-    },
-    {
-      "id": 2,
-      "userId": 2,
-      "type": "like",
-      "fromUserId": 4,
-      "fromUsername": "Aristote",
-      "fromAvatar": "./images/souvenir.jpeg",
-      "content": "et 3 autres personnes ont aimé votre post.",
-      "postId": 1,
-      "postPreview": "Après plusieurs mois de travail, je viens de terminer mon projet personnel...",
-      "isRead": false,
-      "createdAt": "2024-01-16T16:45:00Z"
+      "timestamp": "2025-12-11T15:45:00Z",
+      "read": false
     }
-  ],
-  
-  "follows": [
-    {
-      "id": 1,
-      "followerId": 1,
-      "followingId": 2,
-      "createdAt": "2024-01-15T09:00:00Z"
-    }
-  ],
-  
-  "trends": [
-    {
-      "id": 1,
-      "category": "Technologie · Tendances",
-      "name": "#AIRevolution",
-      "count": 25400,
-      "isFollowing": false
-    },
-    {
-      "id": 2,
-      "category": "Divertissement · Tendances",
-      "name": "#FilmDuMois",
-      "count": 12800,
-      "isFollowing": false
-    }
-  ],
-  
-  "sessions": []
+  ]
 }
