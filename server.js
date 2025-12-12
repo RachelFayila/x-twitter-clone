@@ -2,16 +2,11 @@ const jsonServer = require('json-server');
 const server = jsonServer.create();
 const router = jsonServer.router('db.json');
 const middlewares = jsonServer.defaults();
-const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = 'votre-secret-jwt-tres-securise-changez-cela';
 const PORT = 3000;
-
-// Utiliser les middlewares par défaut et body-parser
-server.use(middlewares);
-server.use(bodyParser.json());
 
 // Middleware pour CORS
 server.use((req, res, next) => {
@@ -21,8 +16,14 @@ server.use((req, res, next) => {
   next();
 });
 
-// Route personnalisée pour la connexion
-server.post('/login', async (req, res) => {
+// Utiliser les middlewares par défaut
+server.use(middlewares);
+server.use(jsonServer.bodyParser);
+
+// ==================== ROUTES PUBLIQUES ====================
+
+// Route pour la connexion
+server.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -33,11 +34,9 @@ server.post('/login', async (req, res) => {
   }
 
   try {
-    // Lire les utilisateurs depuis la base de données
     const db = router.db;
     const users = db.get('users').value();
     
-    // Chercher l'utilisateur par email
     const user = users.find(u => u.email === email);
     
     if (!user) {
@@ -59,7 +58,11 @@ server.post('/login', async (req, res) => {
 
     // Générer un token JWT
     const token = jwt.sign(
-      { userId: user.id, email: user.email, username: user.username },
+      { 
+        userId: user.id, 
+        email: user.email, 
+        username: user.username 
+      },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -83,14 +86,24 @@ server.post('/login', async (req, res) => {
   }
 });
 
-// Route personnalisée pour l'inscription
-server.post('/register', async (req, res) => {
+// Route pour l'inscription
+server.post('/api/register', async (req, res) => {
   const { fullname, email, username, password, birthdate } = req.body;
 
+  // Validation simple
   if (!fullname || !email || !username || !password || !birthdate) {
     return res.status(400).json({
       success: false,
       message: 'Tous les champs sont requis'
+    });
+  }
+
+  // Validation d'email basique
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Format d\'email invalide'
     });
   }
 
@@ -116,6 +129,23 @@ server.post('/register', async (req, res) => {
       });
     }
 
+    // Vérifier l'âge (minimum 13 ans)
+    const birthDate = new Date(birthdate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    if (age < 13) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vous devez avoir au moins 13 ans pour créer un compte'
+      });
+    }
+
     // Hacher le mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -137,12 +167,16 @@ server.post('/register', async (req, res) => {
       avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`
     };
 
-    // Ajouter l'utilisateur à la base de données
+    // Ajouter l'utilisateur
     db.get('users').push(newUser).write();
 
     // Générer un token JWT
     const token = jwt.sign(
-      { userId: newUser.id, email: newUser.email, username: newUser.username },
+      { 
+        userId: newUser.id, 
+        email: newUser.email, 
+        username: newUser.username 
+      },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -167,7 +201,7 @@ server.post('/register', async (req, res) => {
 });
 
 // Route pour vérifier le token
-server.post('/verify-token', (req, res) => {
+server.post('/api/verify-token', (req, res) => {
   const { token } = req.body;
 
   if (!token) {
@@ -179,53 +213,117 @@ server.post('/verify-token', (req, res) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // Récupérer les infos utilisateur complètes
+    const db = router.db;
+    const user = db.get('users').find({ id: decoded.userId }).value();
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+    
+    const { password, ...userWithoutPassword } = user;
+    
     return res.json({
       success: true,
-      user: decoded
+      user: userWithoutPassword
     });
+    
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Token invalide'
+      message: 'Token invalide ou expiré'
     });
   }
+});
+
+// Route pour mot de passe oublié
+server.post('/api/forgot-password', (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email requis'
+    });
+  }
+  
+  const db = router.db;
+  const users = db.get('users').value();
+  const user = users.find(u => u.email === email);
+  
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'Aucun compte trouvé avec cet email'
+    });
+  }
+  
+  // En production, vous enverriez un email ici
+  console.log(`[DEV] Lien de réinitialisation pour ${email}`);
+  console.log(`[DEV] Token simulé: reset_${Date.now()}`);
+  
+  return res.json({
+    success: true,
+    message: 'Un lien de réinitialisation a été envoyé à votre email'
+  });
 });
 
 // Middleware de protection des routes
 server.use((req, res, next) => {
-  const protectedRoutes = ['/posts', '/notifications', '/profile', '/follows'];
-  const isProtectedRoute = protectedRoutes.some(route => req.url.startsWith(route));
-
-  if (isProtectedRoute) {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+  // Routes qui ne nécessitent pas d'authentification
+  const publicRoutes = [
+    '/api/login',
+    '/api/register',
+    '/api/forgot-password',
+    '/api/verify-token'
+  ];
+  
+  const isPublicRoute = publicRoutes.some(route => req.url === route);
+  
+  if (isPublicRoute) {
+    return next();
+  }
+  
+  // Pour les autres routes API, vérifier le token
+  if (req.url.startsWith('/api/')) {
+    const authHeader = req.headers.authorization;
     
-    if (!token) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'Accès non autorisé'
+        message: 'Token d\'authentification manquant'
       });
     }
-
+    
+    const token = authHeader.replace('Bearer ', '');
+    
     try {
-      jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
+      req.userId = decoded.userId;
       next();
     } catch (error) {
       return res.status(401).json({
         success: false,
-        message: 'Token invalide'
+        message: 'Token invalide ou expiré'
       });
     }
   } else {
+    // Pour les routes non-API, laisser passer
     next();
   }
 });
 
-// Utiliser le routeur JSON Server
-server.use(router);
+// Utiliser le routeur JSON Server pour les autres routes
+server.use('/api', router);
 
 // Démarrer le serveur
 server.listen(PORT, () => {
-  console.log(`JSON Server démarré sur le port ${PORT}`);
-  console.log(`Login: POST http://localhost:${PORT}/login`);
-  console.log(`Register: POST http://localhost:${PORT}/register`);
+  console.log(`Serveur démarré sur http://localhost:${PORT}`);
+  console.log(`Login:    POST http://localhost:${PORT}/api/login`);
+  console.log(`Register: POST http://localhost:${PORT}/api/register`);
+  console.log(`Verify:   POST http://localhost:${PORT}/api/verify-token`);
 });

@@ -1,444 +1,281 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialiser l'application si elle n'est pas déjà initialisée
-  if (!window.app) {
-    window.app = {
-      API_BASE_URL: 'http://localhost:3000',
-      getUserSession: () => JSON.parse(localStorage.getItem('userSession')),
-      saveUserSession: (data) => localStorage.setItem('userSession', JSON.stringify(data))
-    };
-  }
-
-  // Configuration des formulaires
-  setupLoginForm();
-  setupRegisterForm();
-  setupForgotPasswordForm();
-  setupPostCreation();
-  setupSearch();
-  setupNotifications();
-  setupProfilePage();
-});
-
-// Formulaire de connexion
-function setupLoginForm() {
-  const loginForm = document.querySelector('form[action*="login"]');
-  
-  if (!loginForm) return;
-
-  loginForm.addEventListener('submit', async (e) => {
+// Gestion du formulaire de connexion
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+  loginForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const email = loginForm.querySelector('#email').value;
-    const password = loginForm.querySelector('#password').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
     
-    // Validation
+    // Validation basique
     if (!email || !password) {
-      showError(loginForm, 'Veuillez remplir tous les champs');
+      alert('Veuillez remplir tous les champs');
       return;
     }
-
+    
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch(`${window.authModule.API_URL}/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password })
       });
-
+      
       const data = await response.json();
-
-      if (data.success) {
-        // Sauvegarder la session
-        if (window.app.saveUserSession) {
-          window.app.saveUserSession(data);
-        } else {
-          localStorage.setItem('userSession', JSON.stringify(data));
-        }
-        
-        // Rediriger vers la page d'accueil
+      
+      if (response.ok) {
+        // Connexion réussie
+        localStorage.setItem('sessionId', data.sessionId);
+        localStorage.setItem('user', JSON.stringify(data.user));
         window.location.href = 'index.html';
       } else {
-        showError(loginForm, data.message || 'Identifiants incorrects');
+        // Erreur de connexion
+        if (data.error === 'Utilisateur non trouvé') {
+          alert('Aucun compte trouvé avec cet email. Voulez-vous créer un compte ?');
+        } else if (data.error === 'Mot de passe incorrect') {
+          alert('Mot de passe incorrect. Veuillez réessayer.');
+        } else {
+          alert('Erreur de connexion: ' + data.error);
+        }
       }
     } catch (error) {
-      console.error('Erreur de connexion:', error);
-      showError(loginForm, 'Erreur de connexion au serveur');
+      console.error('Erreur:', error);
+      alert('Erreur de connexion. Veuillez vérifier votre connexion internet.');
     }
   });
+  
+  // Lien "Mot de passe oublié"
+  const forgotPasswordLink = document.querySelector('.forgot-password');
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.href = 'forgot-password.html';
+    });
+  }
 }
 
-// Formulaire d'inscription
-function setupRegisterForm() {
-  const registerForm = document.querySelector('form[action*="register"]');
-  
-  if (!registerForm) return;
-
-  registerForm.addEventListener('submit', async (e) => {
+// Gestion du formulaire d'inscription
+const registerForm = document.querySelector('.auth-form');
+if (registerForm && window.location.pathname.includes('register.html')) {
+  registerForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const fullname = registerForm.querySelector('#fullname').value;
-    const email = registerForm.querySelector('#email').value;
-    const username = registerForm.querySelector('#username').value;
-    const password = registerForm.querySelector('#password').value;
-    const birthdate = registerForm.querySelector('#birthdate').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const fullname = document.getElementById('fullname').value;
+    const username = document.getElementById('username').value;
+    const birthdate = document.getElementById('birthdate').value;
     
     // Validation
-    if (!fullname || !email || !username || !password || !birthdate) {
-      showError(registerForm, 'Veuillez remplir tous les champs');
+    if (!email || !password || !fullname || !username || !birthdate) {
+      alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
-
+    
     if (password.length < 8) {
-      showError(registerForm, 'Le mot de passe doit contenir au moins 8 caractères');
+      alert('Le mot de passe doit contenir au moins 8 caractères');
       return;
     }
-
-    // Vérifier l'âge (au moins 13 ans)
+    
+    // Calcul de l'âge
     const birthDate = new Date(birthdate);
     const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
     
     if (age < 13) {
-      showError(registerForm, 'Vous devez avoir au moins 13 ans pour créer un compte');
+      alert('Vous devez avoir au moins 13 ans pour créer un compte');
       return;
     }
-
+    
     try {
-      const response = await fetch('http://localhost:3000/register', {
+      const response = await fetch(`${window.authModule.API_URL}/register`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fullname, email, username, password, birthdate })
+        body: JSON.stringify({
+          email,
+          password,
+          fullName: fullname,
+          username,
+          birthdate
+        })
       });
-
+      
       const data = await response.json();
-
-      if (data.success) {
-        // Sauvegarder la session
-        if (window.app.saveUserSession) {
-          window.app.saveUserSession(data);
-        } else {
-          localStorage.setItem('userSession', JSON.stringify(data));
-        }
-        
-        // Rediriger vers la page d'accueil
+      
+      if (response.ok) {
+        // Inscription réussie
+        localStorage.setItem('sessionId', data.sessionId);
+        localStorage.setItem('user', JSON.stringify(data.user));
         window.location.href = 'index.html';
       } else {
-        showError(registerForm, data.message || 'Erreur lors de l\'inscription');
+        // Erreur d'inscription
+        alert('Erreur d\'inscription: ' + data.error);
       }
     } catch (error) {
-      console.error('Erreur d\'inscription:', error);
-      showError(registerForm, 'Erreur de connexion au serveur');
+      console.error('Erreur:', error);
+      alert('Erreur d\'inscription. Veuillez vérifier votre connexion internet.');
     }
   });
 }
 
-// Formulaire de mot de passe oublié
-function setupForgotPasswordForm() {
-  const forgotForm = document.getElementById('forgot-password-form');
-  
-  if (!forgotForm) return;
-
-  forgotForm.addEventListener('submit', async (e) => {
+// Gestion du formulaire de mot de passe oublié
+const forgotPasswordForm = document.getElementById('forgot-password-form');
+if (forgotPasswordForm) {
+  forgotPasswordForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const email = forgotForm.querySelector('#email').value;
-    const resetBtn = forgotForm.querySelector('#reset-btn');
-    const btnText = forgotForm.querySelector('#btn-text');
-    const btnLoading = forgotForm.querySelector('#btn-loading');
-    const successMessage = document.getElementById('success-message');
+    const email = document.getElementById('email').value;
+    const resetBtn = document.getElementById('reset-btn');
     
-    // Validation de l'email
-    if (!email || !isValidEmail(email)) {
-      showError(forgotForm, 'Veuillez entrer une adresse email valide');
+    if (!email) {
+      window.authModule.showError('email-error', 'Veuillez entrer votre adresse email');
       return;
     }
-
-    // Afficher l'indicateur de chargement
-    resetBtn.disabled = true;
-    btnText.style.display = 'none';
-    btnLoading.style.display = 'inline';
-
-    // Simuler l'envoi d'email (dans une vraie application, cela enverrait un vrai email)
-    setTimeout(() => {
-      // Réinitialiser le bouton
-      resetBtn.disabled = false;
-      btnText.style.display = 'inline';
-      btnLoading.style.display = 'none';
-      
-      // Afficher le message de succès
-      forgotForm.style.display = 'none';
-      successMessage.style.display = 'block';
-      
-      // Enregistrer dans la console pour le débogage
-      console.log(`Email de réinitialisation envoyé à: ${email}`);
-    }, 2000);
-  });
-}
-
-// Création de post
-function setupPostCreation() {
-  const postCreator = document.querySelector('.post-creator');
-  
-  if (!postCreator) return;
-
-  const textarea = postCreator.querySelector('textarea');
-  const postButton = postCreator.querySelector('.btn-primary');
-  
-  if (postButton && textarea) {
-    postButton.addEventListener('click', async () => {
-      const content = textarea.value.trim();
-      
-      if (!content) {
-        alert('Veuillez écrire quelque chose avant de poster');
-        return;
-      }
-
-      const userSession = window.app.getUserSession ? 
-        window.app.getUserSession() : 
-        JSON.parse(localStorage.getItem('userSession'));
-
-      if (!userSession) {
-        alert('Veuillez vous connecter pour poster');
-        window.location.href = 'login.html';
-        return;
-      }
-
-      try {
-        // Créer le post
-        const newPost = {
-          id: Date.now().toString(),
-          content,
-          authorId: userSession.user.id,
-          authorName: userSession.user.fullname,
-          authorHandle: `@${userSession.user.username}`,
-          authorAvatar: userSession.user.avatar,
-          likes: 0,
-          retweets: 0,
-          comments: 0,
-          timestamp: new Date().toISOString(),
-          isLiked: false,
-          isRetweeted: false
-        };
-
-        // Dans une vraie application, envoyer à l'API
-        // const response = await fetch('http://localhost:3000/posts', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': `Bearer ${userSession.token}`
-        //   },
-        //   body: JSON.stringify(newPost)
-        // });
-
-        // Pour le moment, on simule juste
-        console.log('Post créé:', newPost);
-        
-        // Réinitialiser le textarea
-        textarea.value = '';
-        
-        // Ajouter le post à la timeline (simulation)
-        addPostToTimeline(newPost);
-        
-        // Afficher un message de succès
-        showSuccessMessage('Post publié avec succès!');
-        
-      } catch (error) {
-        console.error('Erreur lors de la création du post:', error);
-        showError(postCreator, 'Erreur lors de la publication');
-      }
-    });
-  }
-}
-
-// Recherche
-function setupSearch() {
-  const searchInputs = document.querySelectorAll('.search-container input, #main-search');
-  
-  searchInputs.forEach(input => {
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && input.value.trim()) {
-        const searchTerm = encodeURIComponent(input.value.trim());
-        window.location.href = `explorer.html?search=${searchTerm}`;
-      }
-    });
-  });
-}
-
-// Notifications
-function setupNotifications() {
-  const markAllReadBtn = document.getElementById('mark-all-read');
-  const notificationItems = document.querySelectorAll('.notification.unread');
-  
-  if (markAllReadBtn) {
-    markAllReadBtn.addEventListener('click', () => {
-      notificationItems.forEach(item => {
-        item.classList.remove('unread');
+    
+    // Validation d'email basique
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      window.authModule.showError('email-error', 'Veuillez entrer une adresse email valide');
+      return;
+    }
+    
+    window.authModule.hideError('email-error');
+    window.authModule.showLoading(resetBtn);
+    
+    try {
+      const response = await fetch(`${window.authModule.API_URL}/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
       });
       
-      // Mettre à jour le badge
-      const badges = document.querySelectorAll('.notification-badge');
-      badges.forEach(badge => {
-        badge.textContent = '0';
-      });
+      const data = await response.json();
       
-      showSuccessMessage('Toutes les notifications marquées comme lues');
-    });
-  }
-}
-
-// Page profil
-function setupProfilePage() {
-  const editProfileBtn = document.getElementById('edit-profile-btn');
-  const followBtn = document.getElementById('follow-btn');
-  
-  if (editProfileBtn) {
-    editProfileBtn.addEventListener('click', () => {
-      // Dans une vraie application, cela ouvrirait un modal d'édition
-      alert('Fonctionnalité d\'édition de profil à venir!');
-    });
-  }
-  
-  if (followBtn) {
-    followBtn.addEventListener('click', () => {
-      const isFollowing = followBtn.textContent === 'Suivi';
+      window.authModule.hideLoading(resetBtn);
       
-      if (isFollowing) {
-        followBtn.textContent = 'Suivre';
-        followBtn.classList.remove('following');
-        showSuccessMessage('Vous ne suivez plus cet utilisateur');
+      if (response.ok) {
+        // Afficher le message de succès
+        forgotPasswordForm.style.display = 'none';
+        document.getElementById('success-message').style.display = 'block';
       } else {
-        followBtn.textContent = 'Suivi';
-        followBtn.classList.add('following');
-        showSuccessMessage('Vous suivez maintenant cet utilisateur');
+        window.authModule.showError('email-error', data.error || 'Une erreur est survenue');
       }
+    } catch (error) {
+      console.error('Erreur:', error);
+      window.authModule.hideLoading(resetBtn);
+      window.authModule.showError('email-error', 'Erreur de connexion au serveur');
+    }
+  });
+}
+
+// Gestion des boutons de suivi
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('btn-follow') || 
+      (e.target.parentElement && e.target.parentElement.classList.contains('btn-follow'))) {
+    
+    const button = e.target.classList.contains('btn-follow') ? e.target : e.target.parentElement;
+    
+    if (button.textContent === 'Suivre') {
+      button.textContent = 'Suivi(e)';
+      button.style.backgroundColor = '#333';
+      button.style.color = '#fff';
+    } else {
+      button.textContent = 'Suivre';
+      button.style.backgroundColor = '';
+      button.style.color = '';
+    }
+  }
+});
+
+// Gestion des actions de posts (like, retweet, comment)
+document.addEventListener('click', function(e) {
+  // Gérer les likes
+  if (e.target.closest('.post-action') && e.target.closest('.post-action').querySelector('.fa-heart')) {
+    const actionBtn = e.target.closest('.post-action');
+    const heartIcon = actionBtn.querySelector('.fa-heart');
+    const countSpan = actionBtn.querySelector('span');
+    
+    if (heartIcon.classList.contains('far')) {
+      // Ajouter like
+      heartIcon.classList.remove('far');
+      heartIcon.classList.add('fas');
+      heartIcon.style.color = '#f4212e';
+      countSpan.textContent = parseInt(countSpan.textContent) + 1;
+    } else {
+      // Retirer like
+      heartIcon.classList.remove('fas');
+      heartIcon.classList.add('far');
+      heartIcon.style.color = '';
+      countSpan.textContent = parseInt(countSpan.textContent) - 1;
+    }
+  }
+  
+  // Gérer les retweets
+  if (e.target.closest('.post-action') && e.target.closest('.post-action').querySelector('.fa-retweet')) {
+    const actionBtn = e.target.closest('.post-action');
+    const retweetIcon = actionBtn.querySelector('.fa-retweet');
+    const countSpan = actionBtn.querySelector('span');
+    
+    if (retweetIcon.style.color !== 'rgb(0, 186, 124)') {
+      // Ajouter retweet
+      retweetIcon.style.color = '#00ba7c';
+      countSpan.textContent = parseInt(countSpan.textContent) + 1;
+    } else {
+      // Retirer retweet
+      retweetIcon.style.color = '';
+      countSpan.textContent = parseInt(countSpan.textContent) - 1;
+    }
+  }
+});
+
+// Gestion du bouton "Tout marquer comme lu" dans les notifications
+const markAllReadBtn = document.getElementById('mark-all-read');
+if (markAllReadBtn) {
+  markAllReadBtn.addEventListener('click', function() {
+    const unreadNotifications = document.querySelectorAll('.notification.unread');
+    const notificationBadges = document.querySelectorAll('.notification-badge');
+    
+    unreadNotifications.forEach(notification => {
+      notification.classList.remove('unread');
     });
-  }
+    
+    notificationBadges.forEach(badge => {
+      badge.style.display = 'none';
+    });
+    
+    alert('Toutes les notifications ont été marquées comme lues');
+  });
 }
 
-// Fonctions utilitaires
-function showError(formElement, message) {
-  // Nettoyer les erreurs précédentes
-  const existingErrors = formElement.querySelectorAll('.error-message');
-  existingErrors.forEach(error => error.remove());
-  
-  // Créer et afficher le message d'erreur
-  const errorElement = document.createElement('div');
-  errorElement.className = 'error-message';
-  errorElement.textContent = message;
-  errorElement.style.color = '#ff4d4d';
-  errorElement.style.marginTop = '10px';
-  errorElement.style.padding = '10px';
-  errorElement.style.backgroundColor = '#ffe6e6';
-  errorElement.style.borderRadius = '4px';
-  errorElement.style.border = '1px solid #ff4d4d';
-  
-  formElement.prepend(errorElement);
-  
-  // Supprimer le message après 5 secondes
-  setTimeout(() => {
-    errorElement.remove();
-  }, 5000);
-}
-
-function showSuccessMessage(message) {
-  // Créer un élément de message temporaire
-  const messageElement = document.createElement('div');
-  messageElement.textContent = message;
-  messageElement.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 4px;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    animation: slideIn 0.3s ease-out;
-  `;
-  
-  document.body.appendChild(messageElement);
-  
-  // Supprimer le message après 3 secondes
-  setTimeout(() => {
-    messageElement.style.animation = 'slideOut 0.3s ease-out';
-    setTimeout(() => {
-      document.body.removeChild(messageElement);
-    }, 300);
-  }, 3000);
-}
-
-function isValidEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
-}
-
-function addPostToTimeline(post) {
-  const timeline = document.querySelector('.timeline');
-  
-  if (!timeline) return;
-  
-  const postElement = document.createElement('div');
-  postElement.className = 'post';
-  postElement.innerHTML = `
-    <div class="post-avatar">
-      <img src="${post.authorAvatar}" alt="Avatar">
-    </div>
-    <div class="post-content">
-      <div class="post-header">
-        <span class="post-author">${post.authorName}</span>
-        <span class="post-handle">${post.authorHandle} · À l'instant</span>
-      </div>
-      <div class="post-text">${post.content}</div>
-      <div class="post-actions">
-        <button class="post-action">
-          <i class="far fa-comment"></i>
-          <span>0</span>
-        </button>
-        <button class="post-action">
-          <i class="fas fa-retweet"></i>
-          <span>0</span>
-        </button>
-        <button class="post-action">
-          <i class="far fa-heart"></i>
-          <span>0</span>
-        </button>
-        <button class="post-action">
-          <i class="far fa-share-square"></i>
-        </button>
-      </div>
-    </div>
-  `;
-  
-  // Ajouter en haut de la timeline
-  timeline.prepend(postElement);
-}
-
-// Ajouter les styles d'animation
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
+// Gestion de la création de post
+const postCreatorBtn = document.querySelector('.sidebar-post-btn');
+if (postCreatorBtn) {
+  postCreatorBtn.addEventListener('click', function() {
+    const postTextarea = document.querySelector('.post-creator-input textarea');
+    if (postTextarea) {
+      postTextarea.focus();
+    } else {
+      alert('Fonctionnalité de création de post - À implémenter');
     }
-    to {
-      transform: translateX(0);
-      opacity: 1;
+  });
+}
+
+// Gestion de la recherche
+const searchInputs = document.querySelectorAll('.search-container input, #main-search');
+searchInputs.forEach(input => {
+  input.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && this.value.trim()) {
+      alert(`Recherche pour: ${this.value} - À implémenter`);
     }
-  }
-  
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-`;
-document.head.appendChild(style);
+  });
+});

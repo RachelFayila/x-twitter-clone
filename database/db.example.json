@@ -1,81 +1,47 @@
 {
-    "users": [
-        {
-            "id": 1,
-            "name": "John Doe",
-            "username": "johndoe",
-            "email": "john.doe@example.com",
-            "password": "newpassword123",
-            "phone": "+243 111 222 333",
-            "profilePicture": "https://example.com/johndoe.jpg",
-            "bio": "Passionate about coding and open source.",
-            "location": "Goma, DRC",
-            "website": "https://johndoe.com",
-            "createdAt": "2023-09-15T08:30:00Z",
-            "followers": 200,
-            "following": 180
-        },
-        {
-            "id": 2,
-            "name": "Alice Doe",
-            "username": "alicedoe",
-            "email": "alice@example.com",
-            "password": "abcdef",
-            "phone": "+243 987 654 321",
-            "profilePicture": "https://example.com/alice.jpg",
-            "bio": "Designer and artist.",
-            "location": "Lubumbashi, DRC",
-            "website": "https://alicedoe.com",
-            "createdAt": "2023-11-01T09:00:00Z",
-            "followers": 80,
-            "following": 60
-        }
-    ],
-    "tweets": [
-        {
-            "id": 1,
-            "userId": 1,
-            "content": "Hello, this is my first tweet!",
-            "media": [
-                {
-                    "type": "image",
-                    "url": "https://example.com/image1.jpg"
-                },
-                {
-                    "type": "video",
-                    "url": "https://example.com/video1.mp4"
-                }
-            ],
-            "likes": 10,
-            "retweets": 5,
-            "replies": [3],
-            "createdAt": "2023-10-01T12:00:00Z"
-        },
-        {
-            "id": 2,
-            "userId": 1,
-            "content": "Just had a great day at the park!",
-            "media": [
-                {
-                    "type": "image",
-                    "url": "https://example.com/image2.jpg"
-                }
-            ],
-            "likes": 20,
-            "retweets": 10,
-            "replies": [],
-            "createdAt": "2023-10-02T14:30:00Z"
-        },
-        {
-            "id": 3,
-            "userId": 2,
-            "content": "@christianmwanya Welcome to Twitter!",
-            "media": [],
-            "likes": 5,
-            "retweets": 1,
-            "replies": [],
-            "createdAt": "2023-10-01T13:00:00Z",
-            "replyTo": 1
-        }
-    ]
+  "users": [
+    {
+      "id": "1",
+      "fullname": "Rachel Fayila",
+      "email": "rachel@example.com",
+      "username": "FayilaDigitalHub",
+      "password": "$2a$10$N9qo8uLOickgx2ZMRZoMy.Mrq1V1.4B6U9Q7J2lV5v2bJQ8Y5fZ6W",
+      "birthdate": "1995-05-15",
+      "bio": "Développeuse web passionnée par les nouvelles technologies.",
+      "location": "Kinshasa, République Démocratique du Congo",
+      "website": "https://www.fayiladigitalhub.com",
+      "avatar": "./images/image rachel.jpg",
+      "followers": 1245,
+      "following": 245,
+      "posts": 12,
+      "createdAt": "2025-01-15T10:30:00Z"
+    }
+  ],
+  "posts": [
+    {
+      "id": "1",
+      "content": "Connect Student est une startup EdTech qui relie les étudiants et jeunes diplômés aux entreprises pour faciliter leur insertion professionnelle.",
+      "authorId": "2",
+      "authorName": "Exauce Mabiala",
+      "authorHandle": "@exauce",
+      "authorAvatar": "./images/barox.jpeg",
+      "likes": 45,
+      "retweets": 5,
+      "comments": 12,
+      "timestamp": "2025-12-11T10:00:00Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "1",
+      "userId": "1",
+      "type": "retweet",
+      "senderName": "Ephraim Yaba",
+      "senderAvatar": "./images/Ephraim.jpeg",
+      "content": "a retweeté votre post.",
+      "postPreview": "Juste fini de lire un livre incroyable sur le développement web...",
+      "timestamp": "2025-12-11T15:45:00Z",
+      "read": false
+    }
+  ]
 }
