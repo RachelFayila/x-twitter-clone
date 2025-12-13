@@ -5,7 +5,7 @@
       "fullname": "Rachel Fayila",
       "email": "rachel@example.com",
       "username": "FayilaDigitalHub",
-      "password": "$2a$10$N9qo8uLOickgx2ZMRZoMy.Mrq1V1.4B6U9Q7J2lV5v2bJQ8Y5fZ6W",
+      "password": "password123",
       "birthdate": "1995-05-15",
       "bio": "Développeuse web passionnée par les nouvelles technologies.",
       "location": "Kinshasa, République Démocratique du Congo",
@@ -20,27 +20,12 @@
   "posts": [
     {
       "id": "1",
-      "content": "Connect Student est une startup EdTech qui relie les étudiants et jeunes diplômés aux entreprises pour faciliter leur insertion professionnelle.",
-      "authorId": "2",
-      "authorName": "Exauce Mabiala",
-      "authorHandle": "@exauce",
-      "authorAvatar": "./images/barox.jpeg",
-      "likes": 45,
-      "retweets": 5,
-      "comments": 12,
-      "timestamp": "2025-12-11T10:00:00Z"
-    },
-    {
-      "id": "2",
-      "content": "We Act est un programme d'accompagnement et de développement initié par Rawbank pour soutenir la jeunesse congolaise dans plusieurs domaines.",
-      "authorId": "3",
-      "authorName": "We Act",
-      "authorHandle": "@WeAct",
-      "authorAvatar": "./images/We Act.jpeg",
-      "likes": 89,
-      "retweets": 18,
-      "comments": 42,
-      "timestamp": "2025-12-11T07:00:00Z"
+      "userId": "1",
+      "content": "Aujourd'hui, j'ai découvert une nouvelle bibliothèque JavaScript très prometteuse pour simplifier les interactions avec les APIs.",
+      "likes": 7,
+      "retweets": 1,
+      "comments": 3,
+      "timestamp": "2025-12-12T10:00:00Z"
     }
   ],
   "notifications": [
@@ -49,11 +34,9 @@
       "userId": "1",
       "type": "retweet",
       "senderName": "Ephraim Yaba",
-      "senderAvatar": "./images/Ephraim.jpeg",
       "content": "a retweeté votre post.",
-      "postPreview": "Juste fini de lire un livre incroyable sur le développement web...",
-      "timestamp": "2025-12-11T15:45:00Z",
-      "read": false
+      "read": false,
+      "timestamp": "2025-12-11T15:45:00Z"
     }
   ]
 }

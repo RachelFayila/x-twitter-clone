@@ -1,161 +1,125 @@
-const jsonServer = require('json-server');
-const server = jsonServer.create();
-const router = jsonServer.router('db.json');
-const middlewares = jsonServer.defaults();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const jsonServer = require('json-server')
+const server = jsonServer.create()
+const router = jsonServer.router('db.json')
+const middlewares = jsonServer.defaults()
+const fs = require('fs')
+const path = require('path')
 
-const JWT_SECRET = 'votre-secret-jwt-tres-securise-changez-cela';
-const PORT = 3000;
+const PORT = 3000
 
-// Middleware pour CORS
+// Configuration CORS complète
+server.use(middlewares)
+server.use(jsonServer.bodyParser)
+
 server.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  next();
-});
-
-// Utiliser les middlewares par défaut
-server.use(middlewares);
-server.use(jsonServer.bodyParser);
-
-// ==================== ROUTES PUBLIQUES ====================
-
-// Route pour la connexion
-server.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: 'Email et mot de passe requis'
-    });
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200)
   }
+  
+  console.log(`${req.method} ${req.url}`)
+  next()
+})
 
+// === ROUTES D'AUTHENTIFICATION SIMULÉES ===
+
+// Route de connexion (simulée)
+server.post('/api/login', (req, res) => {
   try {
-    const db = router.db;
-    const users = db.get('users').value();
+    const { email, password } = req.body
     
-    const user = users.find(u => u.email === email);
+    console.log('Tentative de connexion:', email)
+    
+    // Lire les utilisateurs depuis db.json
+    const db = JSON.parse(fs.readFileSync('db.json', 'utf8'))
+    const users = db.users || []
+    
+    // Chercher l'utilisateur
+    const user = users.find(u => u.email === email)
     
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Identifiants incorrects'
-      });
+        message: 'Email ou mot de passe incorrect'
+      })
     }
-
-    // Vérifier le mot de passe
-    const isValidPassword = await bcrypt.compare(password, user.password);
     
-    if (!isValidPassword) {
+    // Vérifier le mot de passe (simplifié - en réel utiliser bcrypt)
+    if (user.password !== password) {
       return res.status(401).json({
         success: false,
-        message: 'Identifiants incorrects'
-      });
+        message: 'Email ou mot de passe incorrect'
+      })
     }
-
-    // Générer un token JWT
-    const token = jwt.sign(
-      { 
-        userId: user.id, 
-        email: user.email, 
-        username: user.username 
-      },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    // Retourner la réponse sans le mot de passe
-    const { password: _, ...userWithoutPassword } = user;
     
-    return res.json({
+    // Créer un token simulé
+    const token = `fake-jwt-token-${Date.now()}-${user.id}`
+    
+    // Ne pas renvoyer le mot de passe
+    const { password: _, ...userWithoutPassword } = user
+    
+    res.json({
       success: true,
       message: 'Connexion réussie',
       token,
       user: userWithoutPassword
-    });
-
+    })
+    
   } catch (error) {
-    console.error('Erreur lors de la connexion:', error);
-    return res.status(500).json({
+    console.error('Erreur login:', error)
+    res.status(500).json({
       success: false,
       message: 'Erreur serveur'
-    });
+    })
   }
-});
+})
 
-// Route pour l'inscription
-server.post('/api/register', async (req, res) => {
-  const { fullname, email, username, password, birthdate } = req.body;
-
-  // Validation simple
-  if (!fullname || !email || !username || !password || !birthdate) {
-    return res.status(400).json({
-      success: false,
-      message: 'Tous les champs sont requis'
-    });
-  }
-
-  // Validation d'email basique
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({
-      success: false,
-      message: 'Format d\'email invalide'
-    });
-  }
-
+// Route d'inscription (simulée)
+server.post('/api/register', (req, res) => {
   try {
-    const db = router.db;
-    const users = db.get('users').value();
-
-    // Vérifier si l'email existe déjà
-    const emailExists = users.some(u => u.email === email);
-    if (emailExists) {
+    const { fullname, email, username, password, birthdate } = req.body
+    
+    console.log('Inscription:', email, username)
+    
+    // Validation simple
+    if (!fullname || !email || !username || !password || !birthdate) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tous les champs sont requis'
+      })
+    }
+    
+    // Lire la base de données
+    const dbPath = path.join(__dirname, 'db.json')
+    const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'))
+    const users = db.users || []
+    
+    // Vérifier si l'email existe
+    if (users.some(u => u.email === email)) {
       return res.status(400).json({
         success: false,
         message: 'Cet email est déjà utilisé'
-      });
+      })
     }
-
-    // Vérifier si le nom d'utilisateur existe déjà
-    const usernameExists = users.some(u => u.username === username);
-    if (usernameExists) {
+    
+    // Vérifier si le username existe
+    if (users.some(u => u.username === username)) {
       return res.status(400).json({
         success: false,
         message: 'Ce nom d\'utilisateur est déjà pris'
-      });
-    }
-
-    // Vérifier l'âge (minimum 13 ans)
-    const birthDate = new Date(birthdate);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
+      })
     }
     
-    if (age < 13) {
-      return res.status(400).json({
-        success: false,
-        message: 'Vous devez avoir au moins 13 ans pour créer un compte'
-      });
-    }
-
-    // Hacher le mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Créer un nouvel utilisateur
+    // Créer le nouvel utilisateur
     const newUser = {
-      id: Date.now().toString(),
+      id: (users.length + 1).toString(),
       fullname,
       email,
       username,
-      password: hashedPassword,
+      password, // En production : hasher avec bcrypt
       birthdate,
       createdAt: new Date().toISOString(),
       bio: '',
@@ -164,166 +128,89 @@ server.post('/api/register', async (req, res) => {
       followers: 0,
       following: 0,
       posts: 0,
-      avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`
-    };
-
-    // Ajouter l'utilisateur
-    db.get('users').push(newUser).write();
-
-    // Générer un token JWT
-    const token = jwt.sign(
-      { 
-        userId: newUser.id, 
-        email: newUser.email, 
-        username: newUser.username 
-      },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    // Retourner la réponse sans le mot de passe
-    const { password: _, ...userWithoutPassword } = newUser;
-
-    return res.status(201).json({
+      avatar: `./images/image${Math.floor(Math.random() * 5) + 1}.jpg`
+    }
+    
+    // Ajouter à la base de données
+    users.push(newUser)
+    db.users = users
+    
+    // Sauvegarder dans db.json
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2))
+    
+    // Créer un token
+    const token = `fake-jwt-token-${Date.now()}-${newUser.id}`
+    
+    // Ne pas renvoyer le mot de passe
+    const { password: _, ...userWithoutPassword } = newUser
+    
+    res.status(201).json({
       success: true,
       message: 'Inscription réussie',
       token,
       user: userWithoutPassword
-    });
-
+    })
+    
   } catch (error) {
-    console.error('Erreur lors de l\'inscription:', error);
-    return res.status(500).json({
+    console.error('Erreur inscription:', error)
+    res.status(500).json({
       success: false,
       message: 'Erreur serveur'
-    });
+    })
   }
-});
+})
 
-// Route pour vérifier le token
+// Route de vérification de token
 server.post('/api/verify-token', (req, res) => {
-  const { token } = req.body;
-
+  const { token } = req.body
+  
   if (!token) {
     return res.status(400).json({
       success: false,
       message: 'Token manquant'
-    });
+    })
   }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+  
+  // Simuler une vérification (en réel vérifier JWT)
+  if (token.startsWith('fake-jwt-token-')) {
+    // Extraire l'ID utilisateur du token
+    const userId = token.split('-').pop()
     
-    // Récupérer les infos utilisateur complètes
-    const db = router.db;
-    const user = db.get('users').find({ id: decoded.userId }).value();
+    // Chercher l'utilisateur
+    const db = JSON.parse(fs.readFileSync('db.json', 'utf8'))
+    const user = (db.users || []).find(u => u.id === userId)
     
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'Utilisateur non trouvé'
-      });
+    if (user) {
+      const { password, ...userWithoutPassword } = user
+      return res.json({
+        success: true,
+        user: userWithoutPassword
+      })
     }
-    
-    const { password, ...userWithoutPassword } = user;
-    
-    return res.json({
-      success: true,
-      user: userWithoutPassword
-    });
-    
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: 'Token invalide ou expiré'
-    });
   }
-});
+  
+  res.status(401).json({
+    success: false,
+    message: 'Token invalide'
+  })
+})
 
-// Route pour mot de passe oublié
-server.post('/api/forgot-password', (req, res) => {
-  const { email } = req.body;
-  
-  if (!email) {
-    return res.status(400).json({
-      success: false,
-      message: 'Email requis'
-    });
-  }
-  
-  const db = router.db;
-  const users = db.get('users').value();
-  const user = users.find(u => u.email === email);
-  
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: 'Aucun compte trouvé avec cet email'
-    });
-  }
-  
-  // En production, vous enverriez un email ici
-  console.log(`[DEV] Lien de réinitialisation pour ${email}`);
-  console.log(`[DEV] Token simulé: reset_${Date.now()}`);
-  
-  return res.json({
-    success: true,
-    message: 'Un lien de réinitialisation a été envoyé à votre email'
-  });
-});
+// Utiliser les routes de JSON Server pour les autres endpoints
+server.use('/api', router)
 
-// Middleware de protection des routes
-server.use((req, res, next) => {
-  // Routes qui ne nécessitent pas d'authentification
-  const publicRoutes = [
-    '/api/login',
-    '/api/register',
-    '/api/forgot-password',
-    '/api/verify-token'
-  ];
-  
-  const isPublicRoute = publicRoutes.some(route => req.url === route);
-  
-  if (isPublicRoute) {
-    return next();
-  }
-  
-  // Pour les autres routes API, vérifier le token
-  if (req.url.startsWith('/api/')) {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        success: false,
-        message: 'Token d\'authentification manquant'
-      });
-    }
-    
-    const token = authHeader.replace('Bearer ', '');
-    
-    try {
-      const decoded = jwt.verify(token, JWT_SECRET);
-      req.userId = decoded.userId;
-      next();
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: 'Token invalide ou expiré'
-      });
-    }
-  } else {
-    // Pour les routes non-API, laisser passer
-    next();
-  }
-});
-
-// Utiliser le routeur JSON Server pour les autres routes
-server.use('/api', router);
+// Route pour vérifier que le serveur fonctionne
+server.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'Serveur JSON en fonctionnement' })
+})
 
 // Démarrer le serveur
 server.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
-  console.log(`Login:    POST http://localhost:${PORT}/api/login`);
-  console.log(`Register: POST http://localhost:${PORT}/api/register`);
-  console.log(`Verify:   POST http://localhost:${PORT}/api/verify-token`);
-});
+  console.log(` Serveur démarré sur http://localhost:${PORT}`)
+  console.log(` Health check: http://localhost:${PORT}/health`)
+  console.log(` Login: POST http://localhost:${PORT}/api/login`)
+  console.log(` Register: POST http://localhost:${PORT}/api/register`)
+  console.log(` Users: GET http://localhost:${PORT}/api/users`)
+  console.log(` Utilisez ces identifiants pour tester:`)
+  console.log(`   Email: rachel@example.com`)
+  console.log(`   Mot de passe: password123`)
+})
