@@ -1,207 +1,267 @@
-// Configuration de l'API
-const API_URL = 'http://localhost:3000'
-
-// Vérifier l'authentification au chargement
+// VÉRIFICATION AUTHENTIFICATION
 document.addEventListener('DOMContentLoaded', function() {
-  checkAuth()
-  setupMobileMenu()
-})
+    checkAuth();
+    setupMobileMenu();
+    updateUIFromLocalStorage();
+});
 
-// Fonction pour vérifier l'authentification
-async function checkAuth() {
-  const token = localStorage.getItem('token')
-  const user = localStorage.getItem('user')
-  
-  const currentPage = window.location.pathname.split('/').pop()
-  
-  // Pages protégées
-  const protectedPages = ['index.html', 'explorer.html', 'notifications.html', 'profil.html']
-  const authPages = ['login.html', 'register.html', 'forgot-password.html']
-  
-  if (!token || !user) {
-    // Pas de session
-    if (protectedPages.includes(currentPage)) {
-      window.location.href = 'login.html'
-    }
-    return
-  }
-  
-  // Vérifier le token avec l'API
-  try {
-    const response = await fetch(`${API_URL}/api/verify-token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token })
-    })
+function checkAuth() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const currentPath = window.location.pathname;
+    const currentPage = currentPath.split('/').pop() || 'index.html';
     
-    const data = await response.json()
+    // Définir les pages
+    const protectedPages = ['', 'index.html', 'explorer.html', 'notifications.html', 'profil.html'];
+    const authPages = ['login.html', 'register.html', 'forgot-password.html'];
     
-    if (data.success) {
-      // Session valide
-      if (authPages.includes(currentPage)) {
-        window.location.href = 'index.html'
-      }
-      
-      // Mettre à jour l'interface
-      updateUIForLoggedInUser(data.user)
-    } else {
-      // Session invalide
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      
-      if (protectedPages.includes(currentPage)) {
-        window.location.href = 'login.html'
-      }
-    }
-  } catch (error) {
-    console.log('Erreur vérification token, utilisation du cache:', error)
+    // Vérifier si nous sommes sur une page protégée ou d'auth
+    const isProtectedPage = protectedPages.includes(currentPage);
+    const isAuthPage = authPages.includes(currentPage);
+    const isHomePage = currentPage === '' || currentPage === 'index.html';
     
-    // En cas d'erreur, utiliser les données en cache
-    if (user) {
-      try {
-        const userData = JSON.parse(user)
-        updateUIForLoggedInUser(userData)
-      } catch (e) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        
-        if (protectedPages.includes(currentPage)) {
-          window.location.href = 'login.html'
+    // Règles de redirection
+    if (!user) {
+        // Non connecté : rediriger des pages protégées vers login
+        if (isProtectedPage) {
+            window.location.href = '/login.html';
+            return;
         }
-      }
+    } else {
+        // Connecté : rediriger des pages d'auth vers l'accueil
+        if (isAuthPage) {
+            window.location.href = '/';
+            return;
+        }
+        
+        // Mettre à jour l'interface
+        updateUIForLoggedInUser(user);
     }
-  }
 }
 
-// Mettre à jour l'interface pour un utilisateur connecté
+// MISE À JOUR DE L'INTERFACE
+function updateUIFromLocalStorage() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (user) {
+        updateUIForLoggedInUser(user);
+    }
+}
+
+
 function updateUIForLoggedInUser(user) {
-  // Mettre à jour le nom dans la sidebar
-  const profileNameElements = document.querySelectorAll('.profile-mini-name, .profile-name')
-  const profileHandleElements = document.querySelectorAll('.profile-mini-handle, .profile-handle')
-  
-  profileNameElements.forEach(element => {
-    element.textContent = user.fullname || user.username
-  })
-  
-  profileHandleElements.forEach(element => {
-    if (element.classList.contains('profile-handle')) {
-      element.textContent = `@${user.username}`
-    } else if (element.classList.contains('profile-mini-handle')) {
-      element.textContent = `@${user.username}`
-    }
-  })
-  
-  // Mettre à jour l'avatar si l'élément existe
-  const avatarElements = document.querySelectorAll('.profile-mini-avatar, .post-avatar img')
-  avatarElements.forEach(element => {
-    if (user.avatar && !element.src.includes(user.avatar)) {
-      element.src = user.avatar
-    }
-  })
-  
-  // Mettre à jour les boutons de navigation
-  const navActions = document.querySelector('.nav-actions')
-  if (navActions) {
-    navActions.innerHTML = `
-      <button class="btn btn-secondary" id="logout-btn">Déconnexion</button>
-    `
+    // Mettre à jour le profil dans la sidebar
+    const profileNameElements = document.querySelectorAll('.profile-mini-name');
+    const profileHandleElements = document.querySelectorAll('.profile-mini-handle');
     
-    document.getElementById('logout-btn').addEventListener('click', logout)
-  }
-  
-  // Mettre à jour les liens du menu mobile
-  const mobileNavActions = document.querySelector('.mobile-modal-actions')
-  if (mobileNavActions) {
-    mobileNavActions.innerHTML = `
-      <button class="btn btn-secondary" id="mobile-logout-btn">Déconnexion</button>
-    `
+    profileNameElements.forEach(el => {
+        el.textContent = user.fullname || user.username;
+    });
     
-    document.getElementById('mobile-logout-btn').addEventListener('click', logout)
-  }
+    profileHandleElements.forEach(el => {
+        el.textContent = `@${user.username}`;
+    });
+    
+    // Mettre à jour la navigation
+    updateNavigationForLoggedInUser(user);
 }
 
-// Fonction de déconnexion
+function updateNavigationForLoggedInUser(user) {
+    // Navigation principale
+    const navActions = document.querySelector('.nav-actions');
+    if (navActions) {
+        navActions.innerHTML = `
+            <div class="user-nav">
+                <span class="user-welcome">Bonjour, <strong>${user.username}</strong></span>
+                <button class="btn btn-secondary" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                </button>
+            </div>
+        `;
+        
+        // Ajouter l'événement de déconnexion
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', logout);
+        }
+    }
+    
+    // Menu mobile
+    const mobileNavActions = document.querySelector('.mobile-modal-actions');
+    if (mobileNavActions) {
+        mobileNavActions.innerHTML = `
+            <div class="mobile-user-info">
+                <span class="mobile-user-name">@${user.username}</span>
+                <button class="btn btn-secondary" id="mobile-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                </button>
+            </div>
+        `;
+        
+        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+        if (mobileLogoutBtn) {
+            mobileLogoutBtn.addEventListener('click', logout);
+        }
+    }
+}
+
+// DÉCONNEXION
 function logout() {
-  localStorage.removeItem('token')
-  localStorage.removeItem('user')
-  window.location.href = 'login.html'
+    if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+    }
 }
 
-// Gestion du menu mobile
+// MENU MOBILE
 function setupMobileMenu() {
-  const hamburger = document.querySelector('.hamburger')
-  const mobileModal = document.querySelector('.mobile-modal')
-  const mobileModalClose = document.querySelector('.mobile-modal-close')
-  
-  if (hamburger && mobileModal) {
-    hamburger.addEventListener('click', () => {
-      mobileModal.classList.add('active')
-    })
+    const hamburger = document.querySelector('.hamburger');
+    const mobileModal = document.querySelector('.mobile-modal');
+    const mobileModalClose = document.querySelector('.mobile-modal-close');
     
+    if (!hamburger || !mobileModal) return;
+    
+    // Ouvrir le menu
+    hamburger.addEventListener('click', () => {
+        mobileModal.classList.add('active');
+        updateMobileMenuForAuth();
+    });
+    
+    // Fermer le menu
     if (mobileModalClose) {
-      mobileModalClose.addEventListener('click', () => {
-        mobileModal.classList.remove('active')
-      })
+        mobileModalClose.addEventListener('click', () => {
+            mobileModal.classList.remove('active');
+        });
     }
     
-    // Fermer en cliquant en dehors
+    // Fermer en cliquant à l'extérieur
     mobileModal.addEventListener('click', (e) => {
-      if (e.target === mobileModal) {
-        mobileModal.classList.remove('active')
-      }
-    })
-  }
+        if (e.target === mobileModal) {
+            mobileModal.classList.remove('active');
+        }
+    });
+    
+    // Empêcher la fermeture en cliquant à l'intérieur
+    const modalContent = document.querySelector('.mobile-modal-content');
+    if (modalContent) {
+        modalContent.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
 }
 
-// Fonctions utilitaires
+function updateMobileMenuForAuth() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const mobileModalNav = document.querySelector('.mobile-modal-nav');
+    
+    if (!mobileModalNav) return;
+    
+    if (user) {
+        // Si connecté : afficher les liens normaux + bouton déconnexion
+        const authLinks = mobileModalNav.querySelectorAll('a[href*="login"], a[href*="register"]');
+        authLinks.forEach(link => link.style.display = 'none');
+    } else {
+        // Si non connecté : cacher le bouton déconnexion s'il existe
+        const logoutBtn = mobileModalNav.querySelector('#mobile-logout-btn');
+        if (logoutBtn) logoutBtn.style.display = 'none';
+    }
+}
+
+// FONCTIONS UTILITAIRES
 function showError(elementId, message) {
-  const element = document.getElementById(elementId)
-  if (element) {
-    element.textContent = message
-    element.style.display = 'block'
-  }
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.textContent = message;
+        element.style.display = 'block';
+        element.style.color = '#f4212e';
+        element.style.fontSize = '0.9rem';
+        element.style.marginTop = '0.5rem';
+    }
 }
 
 function hideError(elementId) {
-  const element = document.getElementById(elementId)
-  if (element) {
-    element.style.display = 'none'
-  }
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.style.display = 'none';
+    }
 }
 
 function showLoading(button) {
-  const btnText = button.querySelector('#btn-text')
-  const btnLoading = button.querySelector('#btn-loading')
-  
-  if (btnText && btnLoading) {
-    btnText.style.display = 'none'
-    btnLoading.style.display = 'inline'
-  }
-  
-  button.disabled = true
+    if (!button) return;
+    
+    const originalHTML = button.innerHTML;
+    button.setAttribute('data-original-html', originalHTML);
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement...';
+    button.disabled = true;
 }
 
 function hideLoading(button) {
-  const btnText = button.querySelector('#btn-text')
-  const btnLoading = button.querySelector('#btn-loading')
-  
-  if (btnText && btnLoading) {
-    btnText.style.display = 'inline'
-    btnLoading.style.display = 'none'
-  }
-  
-  button.disabled = false
+    if (!button) return;
+    
+    const originalHTML = button.getAttribute('data-original-html');
+    if (originalHTML) {
+        button.innerHTML = originalHTML;
+    }
+    button.disabled = false;
 }
 
-// Exporter les fonctions pour script.js
-window.authModule = {
-  API_URL,
-  showError,
-  hideError,
-  showLoading,
-  hideLoading,
-  logout,
-  updateUIForLoggedInUser
+// GESTION DES LIENS ACTIFS
+function setActiveNavLink() {
+    const currentPath = window.location.pathname;
+    const currentPage = currentPath.split('/').pop() || 'index.html';
+    
+    // Navigation principale
+    document.querySelectorAll('.nav-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+    
+    // Sidebar
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
 }
+
+// INITIALISATION
+document.addEventListener('DOMContentLoaded', function() {
+    // Définir le lien actif
+    setActiveNavLink();
+    
+    // Mettre à jour l'état de connexion
+    updateUIFromLocalStorage();
+    
+    // Gérer le bouton poster
+    const postButton = document.querySelector('.sidebar-post-btn, .btn-primary');
+    if (postButton) {
+        postButton.addEventListener('click', function() {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            if (!user) {
+                alert('Veuillez vous connecter pour poster un message');
+                window.location.href = '/login.html';
+                return;
+            }
+            // Logique de post ici
+            console.log('Poster un message...');
+        });
+    }
+});
+
+// EXPORT POUR SCRIPT.JS
+window.authModule = {
+    showError,
+    hideError,
+    showLoading,
+    hideLoading,
+    logout,
+    updateUIForLoggedInUser
+};
