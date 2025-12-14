@@ -1,267 +1,285 @@
-// VÉRIFICATION AUTHENTIFICATION
-document.addEventListener('DOMContentLoaded', function() {
-    checkAuth();
-    setupMobileMenu();
-    updateUIFromLocalStorage();
-});
+const API_URL = 'http://localhost:3000';
 
+// Vérifier l'authentification
 function checkAuth() {
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
-    const currentPath = window.location.pathname;
-    const currentPage = currentPath.split('/').pop() || 'index.html';
+    const user = localStorage.getItem('currentUser');
     
-    // Définir les pages
-    const protectedPages = ['', 'index.html', 'explorer.html', 'notifications.html', 'profil.html'];
-    const authPages = ['login.html', 'register.html', 'forgot-password.html'];
-    
-    // Vérifier si nous sommes sur une page protégée ou d'auth
-    const isProtectedPage = protectedPages.includes(currentPage);
-    const isAuthPage = authPages.includes(currentPage);
-    const isHomePage = currentPage === '' || currentPage === 'index.html';
-    
-    // Règles de redirection
     if (!user) {
-        // Non connecté : rediriger des pages protégées vers login
-        if (isProtectedPage) {
-            window.location.href = '/login.html';
-            return;
-        }
-    } else {
-        // Connecté : rediriger des pages d'auth vers l'accueil
-        if (isAuthPage) {
-            window.location.href = '/';
-            return;
-        }
-        
-        // Mettre à jour l'interface
-        updateUIForLoggedInUser(user);
+        // Rediriger vers la page de connexion
+        window.location.href = 'login.html';
+        return null;
     }
+    
+    return JSON.parse(user);
 }
 
-// MISE À JOUR DE L'INTERFACE
-function updateUIFromLocalStorage() {
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
-    if (user) {
-        updateUIForLoggedInUser(user);
-    }
-}
-
-
-function updateUIForLoggedInUser(user) {
-    // Mettre à jour le profil dans la sidebar
-    const profileNameElements = document.querySelectorAll('.profile-mini-name');
-    const profileHandleElements = document.querySelectorAll('.profile-mini-handle');
+// Mettre à jour l'interface utilisateur
+function updateUI(user) {
+    // Mettre à jour le nom dans la sidebar
+    const profileName = document.querySelector('.profile-mini-name');
+    const profileHandle = document.querySelector('.profile-mini-handle');
     
-    profileNameElements.forEach(el => {
-        el.textContent = user.fullname || user.username;
-    });
+    if (profileName) profileName.textContent = user.fullname;
+    if (profileHandle) profileHandle.textContent = '@' + user.username;
     
-    profileHandleElements.forEach(el => {
-        el.textContent = `@${user.username}`;
-    });
-    
-    // Mettre à jour la navigation
-    updateNavigationForLoggedInUser(user);
-}
-
-function updateNavigationForLoggedInUser(user) {
-    // Navigation principale
+    // Changer les boutons de connexion/déconnexion
     const navActions = document.querySelector('.nav-actions');
     if (navActions) {
         navActions.innerHTML = `
-            <div class="user-nav">
-                <span class="user-welcome">Bonjour, <strong>${user.username}</strong></span>
-                <button class="btn btn-secondary" id="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Déconnexion
-                </button>
-            </div>
+            <button class="btn btn-secondary" id="logout-btn">Déconnexion</button>
         `;
         
         // Ajouter l'événement de déconnexion
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
-            logoutBtn.addEventListener('click', logout);
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                    localStorage.removeItem('currentUser');
+                    window.location.href = 'login.html';
+                }
+            });
         }
     }
+}
+
+// Charger les publications
+async function loadPosts() {
+    try {
+        const response = await fetch(`${API_URL}/posts?_sort=createdAt&_order=desc`);
+        if (!response.ok) throw new Error('Erreur de chargement');
+        
+        const posts = await response.json();
+        const timeline = document.getElementById('timeline');
+        
+        if (!timeline) return;
+        
+        // Supprimer les posts existants (sauf les posts statiques initiaux)
+        const staticPosts = timeline.querySelectorAll('.post');
+        if (posts.length > 0) {
+            // Garder seulement le premier post statique comme exemple
+            for (let i = 1; i < staticPosts.length; i++) {
+                staticPosts[i].remove();
+            }
+        }
+        
+        // Afficher les posts de la base de données
+        posts.forEach(post => {
+            const postElement = createPostElement(post);
+            timeline.appendChild(postElement);
+        });
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
+
+// Créer un élément post
+function createPostElement(post) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const isMyPost = currentUser && post.userId === currentUser.id;
     
-    // Menu mobile
-    const mobileNavActions = document.querySelector('.mobile-modal-actions');
-    if (mobileNavActions) {
-        mobileNavActions.innerHTML = `
-            <div class="mobile-user-info">
-                <span class="mobile-user-name">@${user.username}</span>
-                <button class="btn btn-secondary" id="mobile-logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Déconnexion
+    // Formater la date
+    const date = new Date(post.createdAt);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    let timeAgo;
+    if (diffMins < 60) {
+        timeAgo = `${diffMins} min`;
+    } else if (diffHours < 24) {
+        timeAgo = `${diffHours} h`;
+    } else {
+        timeAgo = `${diffDays} j`;
+    }
+    
+    const postElement = document.createElement('article');
+    postElement.className = 'post';
+    postElement.innerHTML = `
+        <div class="post-avatar">
+            <img src="${post.avatar || './images/default-avatar.jpg'}" alt="Avatar" loading="lazy">
+        </div>
+        <div class="post-content">
+            <div class="post-header">
+                <div class="post-author-info">
+                    <strong class="post-author">${isMyPost ? 'Moi' : post.author}</strong>
+                    <span class="post-handle">@${post.username} · ${timeAgo}</span>
+                </div>
+                <button class="post-options" aria-label="Options de la publication">
+                    <i class="fas fa-ellipsis-h"></i>
                 </button>
             </div>
-        `;
+            <div class="post-text">
+                <p>${formatPostText(post.content)}</p>
+            </div>
+            <div class="post-actions">
+                <button class="post-action" aria-label="Commenter">
+                    <i class="far fa-comment"></i>
+                    <span>${post.comments || 0}</span>
+                </button>
+                <button class="post-action" aria-label="Retweeter">
+                    <i class="fas fa-retweet"></i>
+                    <span>${post.retweets || 0}</span>
+                </button>
+                <button class="post-action" aria-label="Aimer">
+                    <i class="far fa-heart"></i>
+                    <span>${post.likes || 0}</span>
+                </button>
+                <button class="post-action" aria-label="Partager">
+                    <i class="far fa-share-square"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    return postElement;
+}
+
+// Formater le texte du post
+function formatPostText(text) {
+    if (!text) return '';
+    // Convertir les hashtags
+    text = text.replace(/#(\w+)/g, '<a href="#" class="hashtag">#$1</a>');
+    // Convertir les mentions
+    text = text.replace(/@(\w+)/g, '<a href="#" class="mention">@$1</a>');
+    // Convertir les sauts de ligne
+    text = text.replace(/\n/g, '<br>');
+    return text;
+}
+
+// Gérer la création de posts
+function setupPostCreation() {
+    const postTextarea = document.getElementById('post-textarea');
+    const postSubmit = document.getElementById('post-submit');
+    const charCounter = document.getElementById('char-counter');
+    
+    if (!postTextarea || !postSubmit || !charCounter) return;
+    
+    // Compteur de caractères
+    postTextarea.addEventListener('input', function() {
+        const length = this.value.length;
+        const remaining = 280 - length;
+        charCounter.textContent = remaining;
         
-        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-        if (mobileLogoutBtn) {
-            mobileLogoutBtn.addEventListener('click', logout);
+        // Changer la couleur selon le nombre de caractères restants
+        if (remaining < 0) {
+            charCounter.style.color = '#f4212e';
+            postSubmit.disabled = true;
+        } else if (remaining < 20) {
+            charCounter.style.color = '#ffd400';
+            postSubmit.disabled = length === 0;
+        } else {
+            charCounter.style.color = '#71767b';
+            postSubmit.disabled = length === 0;
         }
-    }
-}
-
-// DÉCONNEXION
-function logout() {
-    if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        window.location.href = '/login.html';
-    }
-}
-
-// MENU MOBILE
-function setupMobileMenu() {
-    const hamburger = document.querySelector('.hamburger');
-    const mobileModal = document.querySelector('.mobile-modal');
-    const mobileModalClose = document.querySelector('.mobile-modal-close');
-    
-    if (!hamburger || !mobileModal) return;
-    
-    // Ouvrir le menu
-    hamburger.addEventListener('click', () => {
-        mobileModal.classList.add('active');
-        updateMobileMenuForAuth();
     });
     
-    // Fermer le menu
-    if (mobileModalClose) {
-        mobileModalClose.addEventListener('click', () => {
-            mobileModal.classList.remove('active');
+    // Publication du post
+    postSubmit.addEventListener('click', async function() {
+        const content = postTextarea.value.trim();
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        if (!content) {
+            alert('Le post ne peut pas être vide');
+            return;
+        }
+        
+        if (!currentUser) {
+            alert('Vous devez être connecté pour poster');
+            return;
+        }
+        
+        try {
+            const newPost = {
+                content: content,
+                author: currentUser.fullname,
+                username: currentUser.username,
+                userId: currentUser.id,
+                avatar: currentUser.avatar || './images/image rachel.jpg',
+                createdAt: new Date().toISOString(),
+                likes: 0,
+                retweets: 0,
+                comments: 0
+            };
+            
+            const response = await fetch(`${API_URL}/posts`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newPost)
+            });
+            
+            if (!response.ok) throw new Error('Erreur de publication');
+            
+            // Réinitialiser le formulaire
+            postTextarea.value = '';
+            charCounter.textContent = '280';
+            charCounter.style.color = '#71767b';
+            postSubmit.disabled = true;
+            
+            // Recharger les posts
+            await loadPosts();
+            
+            // Message de succès
+            alert('Post publié avec succès !');
+            
+        } catch (error) {
+            alert('Erreur: ' + error.message);
+        }
+    });
+}
+
+// Gérer le menu mobile
+function setupMobileMenu() {
+    const hamburgerToggle = document.getElementById('hamburger-toggle');
+    const mobileModal = document.getElementById('mobile-modal');
+    const mobileModalClose = document.getElementById('mobile-modal-close');
+    
+    if (hamburgerToggle && mobileModal) {
+        hamburgerToggle.addEventListener('click', function() {
+            mobileModal.style.display = 'flex';
+            mobileModal.setAttribute('aria-hidden', 'false');
+        });
+    }
+    
+    if (mobileModalClose && mobileModal) {
+        mobileModalClose.addEventListener('click', function() {
+            mobileModal.style.display = 'none';
+            mobileModal.setAttribute('aria-hidden', 'true');
         });
     }
     
     // Fermer en cliquant à l'extérieur
-    mobileModal.addEventListener('click', (e) => {
-        if (e.target === mobileModal) {
-            mobileModal.classList.remove('active');
-        }
-    });
-    
-    // Empêcher la fermeture en cliquant à l'intérieur
-    const modalContent = document.querySelector('.mobile-modal-content');
-    if (modalContent) {
-        modalContent.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-    }
-}
-
-function updateMobileMenuForAuth() {
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
-    const mobileModalNav = document.querySelector('.mobile-modal-nav');
-    
-    if (!mobileModalNav) return;
-    
-    if (user) {
-        // Si connecté : afficher les liens normaux + bouton déconnexion
-        const authLinks = mobileModalNav.querySelectorAll('a[href*="login"], a[href*="register"]');
-        authLinks.forEach(link => link.style.display = 'none');
-    } else {
-        // Si non connecté : cacher le bouton déconnexion s'il existe
-        const logoutBtn = mobileModalNav.querySelector('#mobile-logout-btn');
-        if (logoutBtn) logoutBtn.style.display = 'none';
-    }
-}
-
-// FONCTIONS UTILITAIRES
-function showError(elementId, message) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.textContent = message;
-        element.style.display = 'block';
-        element.style.color = '#f4212e';
-        element.style.fontSize = '0.9rem';
-        element.style.marginTop = '0.5rem';
-    }
-}
-
-function hideError(elementId) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.style.display = 'none';
-    }
-}
-
-function showLoading(button) {
-    if (!button) return;
-    
-    const originalHTML = button.innerHTML;
-    button.setAttribute('data-original-html', originalHTML);
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement...';
-    button.disabled = true;
-}
-
-function hideLoading(button) {
-    if (!button) return;
-    
-    const originalHTML = button.getAttribute('data-original-html');
-    if (originalHTML) {
-        button.innerHTML = originalHTML;
-    }
-    button.disabled = false;
-}
-
-// GESTION DES LIENS ACTIFS
-function setActiveNavLink() {
-    const currentPath = window.location.pathname;
-    const currentPage = currentPath.split('/').pop() || 'index.html';
-    
-    // Navigation principale
-    document.querySelectorAll('.nav-link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-    
-    // Sidebar
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-}
-
-// INITIALISATION
-document.addEventListener('DOMContentLoaded', function() {
-    // Définir le lien actif
-    setActiveNavLink();
-    
-    // Mettre à jour l'état de connexion
-    updateUIFromLocalStorage();
-    
-    // Gérer le bouton poster
-    const postButton = document.querySelector('.sidebar-post-btn, .btn-primary');
-    if (postButton) {
-        postButton.addEventListener('click', function() {
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
-            if (!user) {
-                alert('Veuillez vous connecter pour poster un message');
-                window.location.href = '/login.html';
-                return;
+    if (mobileModal) {
+        mobileModal.addEventListener('click', function(e) {
+            if (e.target === mobileModal) {
+                mobileModal.style.display = 'none';
+                mobileModal.setAttribute('aria-hidden', 'true');
             }
-            // Logique de post ici
-            console.log('Poster un message...');
         });
     }
-});
+}
 
-// EXPORT POUR SCRIPT.JS
-window.authModule = {
-    showError,
-    hideError,
-    showLoading,
-    hideLoading,
-    logout,
-    updateUIForLoggedInUser
-};
+// Initialisation
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Main.js chargé');
+    
+    // Vérifier l'authentification
+    const user = checkAuth();
+    if (!user) return;
+    
+    // Mettre à jour l'interface
+    updateUI(user);
+    
+    // Charger les publications
+    await loadPosts();
+    
+    // Configurer la création de posts
+    setupPostCreation();
+    
+    // Configurer le menu mobile
+    setupMobileMenu();
+});

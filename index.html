@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>X - Accueil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -38,10 +39,10 @@
                 <a href="register.html" class="btn btn-primary">S'inscrire</a>
             </div>
             
-               <div class="mobile-menu-toggle">
-                <label for="hamburger" class="hamburger">
-                    <img src="./images/menu-hamburger.png" alt="icône menu hamburger">
-                </label>
+            <div class="mobile-menu-toggle">
+                <button class="hamburger" id="hamburger-toggle" aria-label="Menu mobile">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </nav>
     </header>
@@ -49,10 +50,10 @@
     <main class="main-container">
         <div class="layout-sidebar">
             <aside class="sidebar">
-                <a href="index.html" class="sidebar-logo">𝕏</a>
+                <a href="index.html" class="sidebar-logo" aria-label="Accueil">𝕏</a>
                 
-                <div class="sidebar-nav">
-                    <a href="index.html" class="sidebar-link active">
+                <nav class="sidebar-nav" aria-label="Navigation principale">
+                    <a href="index.html" class="sidebar-link active" aria-current="page">
                         <i class="fas fa-home"></i>
                         <span>Accueil</span>
                     </a>
@@ -69,19 +70,21 @@
                         <i class="fas fa-user"></i>
                         <span>Profil</span>
                     </a>
-                    <button class="sidebar-post-btn">
+                    <button class="sidebar-post-btn" id="sidebar-post-trigger">
                         <i class="fas fa-feather-alt"></i>
                         <span>Poster</span>
                     </button>
-                </div>
+                </nav>
                 
                 <div class="sidebar-profile">
                     <div class="profile-mini">
                         <div class="profile-mini-info">
                             <span class="profile-mini-name">Rachel Fayila</span>
-                            <span class="profile-mini-handle">FayilaDigitalHub</span>
+                            <span class="profile-mini-handle">@FayilaDigitalHub</span>
                         </div>
-                        <i class="fas fa-ellipsis-h"></i>
+                        <button class="profile-options" aria-label="Options du profil">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
                     </div>
                 </div>
             </aside>
@@ -89,261 +92,331 @@
             <div class="content">
                 <div class="content-header">
                     <h1>Accueil</h1>
-                    <button class="icon-btn">
-                        <i class="fas fa-star"></i>
+                    <button class="icon-btn" aria-label="Filtrer les publications">
+                        <i class="fas fa-sliders-h"></i>
                     </button>
                 </div>
                 
-                <div class="post-creator">
+                <div class="post-creator" id="post-creator">
                     <div class="post-creator-avatar">
-                        <img src="./images/image rachel.jpg" alt="Avatar">
+                        <img src="./images/image rachel.jpg" alt="Avatar de Rachel Fayila" loading="lazy">
                     </div>
                     <div class="post-creator-input">
-                        <textarea placeholder="Quoi de neuf ?" rows="3"></textarea>
+                        <textarea 
+                            placeholder="Quoi de neuf ?" 
+                            rows="3"
+                            maxlength="280"
+                            id="post-textarea"
+                            aria-label="Rédiger une publication"
+                        ></textarea>
                         <div class="post-creator-actions">
                             <div class="post-creator-icons">
-                                <i class="fas fa-image"></i>
-                                <i class="fas fa-poll"></i>
-                                <i class="far fa-smile"></i>
-                                <i class="far fa-calendar-alt"></i>
+                                <button class="icon-btn-small" aria-label="Ajouter une image">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                                <button class="icon-btn-small" aria-label="Ajouter un sondage">
+                                    <i class="fas fa-poll"></i>
+                                </button>
+                                <button class="icon-btn-small" aria-label="Ajouter un emoji">
+                                    <i class="far fa-smile"></i>
+                                </button>
+                                <button class="icon-btn-small" aria-label="Planifier la publication">
+                                    <i class="far fa-calendar-alt"></i>
+                                </button>
                             </div>
-                            <button class="btn btn-primary">Poster</button>
+                            <div class="post-creator-counter">
+                                <span id="char-counter">280</span>
+                            </div>
+                            <button class="btn btn-primary" id="post-submit" disabled>Poster</button>
                         </div>
                     </div>
                 </div>
                 
-                <div class="timeline">
-                    <div class="post">
+                <div class="timeline" id="timeline">
+                    <article class="post">
                         <div class="post-avatar">
-                            <img src="./images/GOAT.jpeg" alt="image">
+                            <img src="./images/GOAT.jpeg" alt="Avatar de LE GOAT" loading="lazy">
                         </div>
                         <div class="post-content">
                             <div class="post-header">
-                                <span class="post-author">LE GOAT</span>
-                                <span class="post-handle">2h</span>
+                                <div class="post-author-info">
+                                    <strong class="post-author">LE GOAT</strong>
+                                    <span class="post-handle">@LEGOAT · 2h</span>
+                                </div>
+                                <button class="post-options" aria-label="Options de la publication">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
                             </div>
                             <div class="post-text">
-                                @Erick Ngeleka Responsable du programme #WeAct #Rawbank <br>
-                                Un leader qui voit l’avenir dans la jeunesse et y investit concrètement. L’avenir appartient à ceux qui passent à l’action, et il nous inspire à agir pour, à notre tour, inspirer les autres.
+                                <p>
+                                    <a href="#" class="mention">@ErickNgeleka</a> Responsable du programme <a href="#" class="hashtag">#WeAct</a> <a href="#" class="hashtag">#Rawbank</a>
+                                </p>
+                                <p>
+                                    Un leader qui voit l'avenir dans la jeunesse et y investit concrètement. L'avenir appartient à ceux qui passent à l'action, et il nous inspire à agir pour, à notre tour, inspirer les autres.
+                                </p>
                             </div>
                             <div class="post-actions">
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Commenter">
                                     <i class="far fa-comment"></i>
                                     <span>22</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Retweeter">
                                     <i class="fas fa-retweet"></i>
                                     <span>15</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Aimer">
                                     <i class="far fa-heart"></i>
                                     <span>65</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Partager">
                                     <i class="far fa-share-square"></i>
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </article>
                     
-                    <div class="post">
+                    <article class="post">
                         <div class="post-avatar">
-                            <img src="./images/fayila&dark.jpeg" alt="image">
+                            <img src="./images/fayila&dark.jpeg" alt="Logo FayilaDigitalHub et Dark Business Hi-Tech" loading="lazy">
                         </div>
                         <div class="post-content">
                             <div class="post-header">
-                                <span class="post-author">FayilaDigitalHub & Dark Business Hi-Tech</span>
-                                <span class="post-handle">3h</span>
+                                <div class="post-author-info">
+                                    <strong class="post-author">FayilaDigitalHub & Dark Business Hi-Tech</strong>
+                                    <span class="post-handle">@FayilaDarkCollab · 3h</span>
+                                </div>
+                                <button class="post-options" aria-label="Options de la publication">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
                             </div>
                             <div class="post-text">
-                                FayilaDigitalHub et Dark Business Hi-Tech : L’alliance qui propulse les jeunes talents ! <br>
-                                Grâce à cette synergie, chaque participant bénéficie à la fois de l’expertise pédagogique de FayilaDigitalHub et de l’expérience technologique de Dark Business Hi-Tech.
+                                <p>
+                                    <strong>FayilaDigitalHub et Dark Business Hi-Tech :</strong> L'alliance qui propulse les jeunes talents !
+                                </p>
+                                <p>
+                                    Grâce à cette synergie, chaque participant bénéficie à la fois de l'expertise pédagogique de FayilaDigitalHub et de l'expérience technologique de Dark Business Hi-Tech.
+                                </p>
                             </div>
                             <div class="post-actions">
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Commenter">
                                     <i class="far fa-comment"></i>
                                     <span>20</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Retweeter">
                                     <i class="fas fa-retweet"></i>
                                     <span>12</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Aimer">
                                     <i class="far fa-heart"></i>
                                     <span>45</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Partager">
                                     <i class="far fa-share-square"></i>
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </article>
 
-                    <div class="post">
+                    <article class="post">
                         <div class="post-avatar">
-                            <img src="./images/barox.jpeg" alt="image">
+                            <img src="./images/barox.jpeg" alt="Avatar d'Exauce Mabiala" loading="lazy">
                         </div>
                         <div class="post-content">
                             <div class="post-header">
-                                <span class="post-author">Exauce Mabiala</span>
-                                <span class="post-handle">4h</span>
+                                <div class="post-author-info">
+                                    <strong class="post-author">Exauce Mabiala</strong>
+                                    <span class="post-handle">@BaroxOfficiel · 4h</span>
+                                </div>
+                                <button class="post-options" aria-label="Options de la publication">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
                             </div>
                             <div class="post-text">
-                                Connect Student est une startup EdTech qui relie les étudiants et jeunes diplomés aux entreprises pour faciliter leur insertion professionnelle. 
+                                <p>
+                                    <strong>Connect Student</strong> est une startup EdTech qui relie les étudiants et jeunes diplômés aux entreprises pour faciliter leur insertion professionnelle.
+                                </p>
+                                <p>
+                                    <a href="#" class="hashtag">#Innovation</a> <a href="#" class="hashtag">#Éducation</a> <a href="#" class="hashtag">#Emploi</a>
+                                </p>
                             </div>
                             <div class="post-actions">
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Commenter">
                                     <i class="far fa-comment"></i>
                                     <span>12</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Retweeter">
                                     <i class="fas fa-retweet"></i>
                                     <span>5</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Aimer">
                                     <i class="far fa-heart"></i>
                                     <span>45</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Partager">
                                     <i class="far fa-share-square"></i>
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </article>
                     
-                    <div class="post">
+                    <article class="post">
                         <div class="post-avatar">
-                            <img src="./images/We Act.jpeg" alt="image">
+                            <img src="./images/We Act.jpeg" alt="Logo We Act" loading="lazy">
                         </div>
                         <div class="post-content">
                             <div class="post-header">
-                                <span class="post-author">We Act</span>
-                                <span class="post-handle"> 5h</span>
+                                <div class="post-author-info">
+                                    <strong class="post-author">We Act</strong>
+                                    <span class="post-handle">@WeActOfficial · 5h</span>
+                                </div>
+                                <button class="post-options" aria-label="Options de la publication">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
                             </div>
                             <div class="post-text">
-                                We Act est un programme d’accompagnement et de développement initié par Rawbank pour soutenir la jeunesse congolaise dans plusieurs domaines.
+                                <p>
+                                    <strong>We Act</strong> est un programme d'accompagnement et de développement initié par Rawbank pour soutenir la jeunesse congolaise dans plusieurs domaines.
+                                </p>
+                                <p>
+                                    <a href="#" class="hashtag">#Jeunesse</a> <a href="#" class="hashtag">#Développement</a> <a href="#" class="hashtag">#RDC</a>
+                                </p>
                             </div>
                             <div class="post-actions">
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Commenter">
                                     <i class="far fa-comment"></i>
                                     <span>42</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Retweeter">
                                     <i class="fas fa-retweet"></i>
                                     <span>18</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Aimer">
                                     <i class="far fa-heart"></i>
                                     <span>89</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Partager">
                                     <i class="far fa-share-square"></i>
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </article>
                     
-                    <div class="post">
+                    <article class="post">
                         <div class="post-avatar">
-                            <img src="./images/subira.jpeg" alt="image">
+                            <img src="./images/subira.jpeg" alt="Avatar de Subir'Art" loading="lazy">
                         </div>
                         <div class="post-content">
                             <div class="post-header">
-                                <span class="post-author">Subir'Art</span>
-                                <span class="post-handle">8h</span>
+                                <div class="post-author-info">
+                                    <strong class="post-author">Subir'Art</strong>
+                                    <span class="post-handle">@SubirArt · 8h</span>
+                                </div>
+                                <button class="post-options" aria-label="Options de la publication">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
                             </div>
                             <div class="post-text">
-                                Je suis ambassadrice de We Act, j'ai dis non aux violences basées sur le genre. Rejoignez-nous dans cette lutte importante !
+                                <p>
+                                    Je suis ambassadrice de <a href="#" class="mention">@WeAct</a>, j'ai dit non aux violences basées sur le genre.
+                                </p>
+                                <p>
+                                    Rejoignez-nous dans cette lutte importante !
+                                </p>
+                                <p>
+                                    <a href="#" class="hashtag">#StopVBG</a> <a href="#" class="hashtag">#Égalité</a> <a href="#" class="hashtag">#Sensibilisation</a>
+                                </p>
                             </div>
                             <div class="post-actions">
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Commenter">
                                     <i class="far fa-comment"></i>
                                     <span>8</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Retweeter">
                                     <i class="fas fa-retweet"></i>
                                     <span>3</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Aimer">
                                     <i class="far fa-heart"></i>
                                     <span>27</span>
                                 </button>
-                                <button class="post-action">
+                                <button class="post-action" aria-label="Partager">
                                     <i class="far fa-share-square"></i>
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
             </div>
 
             <aside class="right-sidebar">
                 <div class="search-container">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Rechercher sur X">
+                    <input type="search" placeholder="Rechercher sur X" aria-label="Rechercher sur X">
                 </div>
                 
-                <div class="trends">
+                <section class="trends" aria-label="Tendances">
                     <h3>Tendances pour vous</h3>
                     <div class="trend">
                         <span class="trend-category">Technologie · Tendances</span>
-                        <span class="trend-name">#DarkBusinessHi-Tech</span>
+                        <a href="#" class="trend-name">#DarkBusinessHiTech</a>
                         <span class="trend-count">25.4K posts</span>
                     </div>
                     <div class="trend">
                         <span class="trend-category">Mr Barox · Tendances</span>
-                        <span class="trend-name">#ConnectStudent</span>
+                        <a href="#" class="trend-name">#ConnectStudent</a>
                         <span class="trend-count">12.8K posts</span>
                     </div>
                     <div class="trend">
                         <span class="trend-category">Accompagnement des jeunes congolais · Tendances</span>
-                        <span class="trend-name">#We Act</span>
+                        <a href="#" class="trend-name">#WeAct</a>
                         <span class="trend-count">8.7K posts</span>
                     </div>
                     <a href="explorer.html" class="trend-more">Voir plus</a>
-                </div>
+                </section>
                 
-                <div class="who-to-follow">
+                <section class="who-to-follow" aria-label="Suggestions de suivi">
                     <h3>Suggestions</h3>
                     <div class="follow-user">
-                        <img src="./images/We Act.jpeg" alt="Avatar">
+                        <img src="./images/We Act.jpeg" alt="Logo We Act" loading="lazy">
                         <div class="follow-user-info">
-                            <span class="follow-user-name">We Act</span>
-                            <span class="follow-user-handle">Agir pour inspirer</span>
+                            <strong class="follow-user-name">We Act</strong>
+                            <span class="follow-user-handle">@WeActOfficiel</span>
                         </div>
-                        <button class="btn btn-follow">Suivre</button>
+                        <button class="btn btn-follow" aria-label="Suivre We Act">Suivre</button>
                     </div>
                     <div class="follow-user">
-                        <img src="./images/rawbank.jpeg" alt="Avatar">
+                        <img src="./images/rawbank.jpeg" alt="Logo Rawbank" loading="lazy">
                         <div class="follow-user-info">
-                            <span class="follow-user-name">Rawbank</span>
-                            <span class="follow-user-handle">Au-delà d’une banque</span>
+                            <strong class="follow-user-name">Rawbank</strong>
+                            <span class="follow-user-handle">@RawbankOfficiel</span>
                         </div>
-                        <button class="btn btn-follow">Suivre</button>
+                        <button class="btn btn-follow" aria-label="Suivre Rawbank">Suivre</button>
                     </div>
                     <a href="explorer.html" class="follow-more">Voir plus</a>
-                </div>
+                </section>
                 
-                <div class="footer-links">
-                    <a href="#">Conditions d'utilisation</a>
-                    <a href="#">Politique de confidentialité</a>
-                    <a href="#">Politique relative aux cookies</a>
-                    <a href="#">Accessibilité</a>
-                    <a href="#">Informations sur les publicités</a>
+                <footer class="footer-links" aria-label="Liens légaux">
+                    <a href="#" class="footer-link">Conditions d'utilisation</a>
+                    <a href="#" class="footer-link">Politique de confidentialité</a>
+                    <a href="#" class="footer-link">Politique relative aux cookies</a>
+                    <a href="#" class="footer-link">Accessibilité</a>
+                    <a href="#" class="footer-link">Informations sur les publicités</a>
                     <span class="copyright">© 2025 X Corp.</span>
-                </div>
+                </footer>
             </aside>
         </div>
     </main>
 
-    <div class="mobile-modal">
+    <div class="mobile-modal" id="mobile-modal" aria-hidden="true">
         <div class="mobile-modal-content">
             <div class="mobile-modal-header">
                 <h3>Menu</h3>
-                <button class="mobile-modal-close">&times;</button>
+                <button class="mobile-modal-close" id="mobile-modal-close" aria-label="Fermer le menu">
+                    &times;
+                </button>
             </div>
-            <div class="mobile-modal-nav">
-                <a href="index.html" class="mobile-nav-link">
+            <nav class="mobile-modal-nav" aria-label="Navigation mobile">
+                <a href="index.html" class="mobile-nav-link active">
                     <i class="fas fa-home"></i>
                     <span>Accueil</span>
                 </a>
@@ -364,6 +437,16 @@
                     <a href="login.html" class="btn btn-secondary">Connexion</a>
                     <a href="register.html" class="btn btn-primary">S'inscrire</a>
                 </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="post-modal" id="post-modal" aria-hidden="true">
+        <div class="post-modal-content">
+            <div class="post-modal-header">
+                <button class="post-modal-close" id="post-modal-close" aria-label="Fermer">
+                    &times;
+                </button>
             </div>
         </div>
     </div>

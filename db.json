@@ -1,42 +1,39 @@
 {
   "users": [
     {
-      "id": "1",
+      "id": 1,
       "fullname": "Rachel Fayila",
-      "email": "rachel@example.com",
-      "username": "FayilaDigitalHub",
-      "password": "password123",
-      "birthdate": "1995-05-15",
-      "bio": "Développeuse web passionnée par les nouvelles technologies.",
-      "location": "Kinshasa, République Démocratique du Congo",
-      "website": "https://www.fayiladigitalhub.com",
+      "email": "rachel@test.com",
+      "username": "rachel_fayila",
+      "password": "Test1234@",
       "avatar": "./images/image rachel.jpg",
-      "followers": 1245,
-      "following": 245,
-      "posts": 12,
-      "createdAt": "2025-01-15T10:30:00Z"
+      "createdAt": "2024-01-15T10:30:00.000Z"
     }
   ],
   "posts": [
     {
-      "id": "1",
-      "userId": "1",
-      "content": "Aujourd'hui, j'ai découvert une nouvelle bibliothèque JavaScript très prometteuse pour simplifier les interactions avec les APIs.",
-      "likes": 7,
-      "retweets": 1,
-      "comments": 3,
-      "timestamp": "2025-12-12T10:00:00Z"
-    }
-  ],
-  "notifications": [
+      "id": 1,
+      "content": "Bienvenue sur mon clone de X ! Je suis Rachel Fayila. 🚀 #DigitalHub #Innovation",
+      "author": "Rachel Fayila",
+      "username": "rachel_fayila",
+      "userId": 1,
+      "avatar": "./images/image rachel.jpg",
+      "createdAt": "2024-01-15T10:35:00.000Z",
+      "likes": 42,
+      "retweets": 15,
+      "comments": 8
+    },
     {
-      "id": "1",
-      "userId": "1",
-      "type": "retweet",
-      "senderName": "Ephraim Yaba",
-      "content": "a retweeté votre post.",
-      "read": false,
-      "timestamp": "2025-12-11T15:45:00Z"
+      "id": 2,
+      "content": "Avec @DarkBusinessHiTech, nous formons la jeunesse aux technologies de demain. 💻 #TechEducation",
+      "author": "FayilaDigitalHub",
+      "username": "fayiladigitalhub",
+      "userId": 1,
+      "avatar": "./images/fayila&dark.jpeg",
+      "createdAt": "2024-01-14T09:20:00.000Z",
+      "likes": 89,
+      "retweets": 34,
+      "comments": 12
     }
   ]
 }
